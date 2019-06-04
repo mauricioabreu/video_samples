@@ -9,7 +9,6 @@ import (
 func main() {
 	streamingURL := "http://127.0.0.1:8080/play/hls/bunny/index.m3u8"
 	generateThumb(streamingURL)
-	fmt.Println("Generating thumbnail...")
 }
 
 func generateThumb(streamingURL string) {
@@ -17,9 +16,9 @@ func generateThumb(streamingURL string) {
 	cmd := exec.Command("ffmpeg", args...)
 	var out bytes.Buffer
 	cmd.Stdout = &out
-	err := cmd.Run()
+	err := cmd.Start()
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("ffmpeg outout: %q\n", out.String())
+	fmt.Printf("Generating thumbnail for %s\n", streamingURL)
 }
