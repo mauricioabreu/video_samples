@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
 	"os/exec"
 )
@@ -14,8 +13,6 @@ func main() {
 func generateThumb(streamingURL string) {
 	args := []string{"-live_start_index", "-1", "-f", "hls", "-i", fmt.Sprintf("%s", streamingURL), "-vf", "fps=1,scale=-1:169", "-vsync", "vfr", "-q:v", "5", "-threads", "1", "%09d.jpg"}
 	cmd := exec.Command("ffmpeg", args...)
-	var out bytes.Buffer
-	cmd.Stdout = &out
 	err := cmd.Start()
 	if err != nil {
 		panic(err)
