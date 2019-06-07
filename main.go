@@ -2,10 +2,14 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
+	"os"
 	"os/exec"
 
 	"github.com/fsnotify/fsnotify"
+	"github.com/go-redis/redis"
+	"github.com/gofrs/uuid"
 )
 
 func main() {
@@ -26,6 +30,7 @@ func generateThumb(streamingURL string) {
 }
 
 func collectThumbs(path string) {
+	client := newClient()
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
 		log.Fatal(err)
@@ -47,6 +52,21 @@ func collectThumbs(path string) {
 		for event := range watcher.Events {
 			if event.Op&fsnotify.Create == fsnotify.Create {
 				log.Printf("Received file %s", event.Name)
+				data, err := ioutil.ReadFile(event.Name)
+				if err != nil {
+					log.Printf("Could not read file: %s", err)
+					continue
+				}
+				pathInfo, err := os.Stat(event.Name)
+				if err != nil {
+					log.Fatalf("Could not read path metadata for %s: %s", event.Name, err)
+				}
+				timestamp := pathInfo.ModTime().UTC().Unix()
+				if err := saveThumb(client, "big_buck_bunny", timestamp, data); err != nil {
+					log.Printf("Could not save thumbs for %s", "big_buck_bunny")
+					continue
+				}
+				log.Printf("Saved thumb for %s", "big_buck_bunny")
 			}
 		}
 		done <- true
@@ -56,4 +76,23 @@ func collectThumbs(path string) {
 	case <-done:
 		log.Print("Done watching files...")
 	}
+}
+
+func saveThumb(c *redis.Client, key string, timestamp int64, blob []byte) error {
+	id, err := uuid.NewV4()
+	if err != nil {
+		log.Fatalf("Failed to generate UUID: %v", err)
+	}
+	return c.ZAdd(fmt.Sprintf("thumbs/%s", key), redis.Z{Score: float64(timestamp), Member: id}).Err()
+}
+
+func newClient() *redis.Client {
+	client := redis.NewClient(&redis.Options{
+		Addr:     "localhost:6379",
+		Password: "",
+		DB:       0,
+	})
+	pong, err := client.Ping().Result()
+	log.Println(pong, err)
+	return client
 }
