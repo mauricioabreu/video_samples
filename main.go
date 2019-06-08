@@ -63,7 +63,7 @@ func collectThumbs(path string) {
 				}
 				timestamp := pathInfo.ModTime().UTC().Unix()
 				if err := saveThumb(client, "big_buck_bunny", timestamp, data); err != nil {
-					log.Printf("Could not save thumbs for %s", "big_buck_bunny")
+					log.Printf("Could not save thumbs for %s: %s", "big_buck_bunny", err)
 					continue
 				}
 				log.Printf("Saved thumb for %s", "big_buck_bunny")
