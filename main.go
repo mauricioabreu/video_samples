@@ -6,6 +6,8 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"strconv"
+	"time"
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/go-redis/redis"
@@ -84,9 +86,23 @@ func collectThumbs(path string) {
 func saveThumb(c *redis.Client, key string, timestamp int64, blob []byte) error {
 	id, err := uuid.NewV4()
 	if err != nil {
-		log.Fatalf("Failed to generate UUID: %v", err)
+		return err
 	}
-	return c.ZAdd(fmt.Sprintf("thumbs/%s", key), redis.Z{Score: float64(timestamp), Member: id}).Err()
+
+	err = c.ZAdd(fmt.Sprintf("thumbs/%s", key), redis.Z{Score: float64(timestamp), Member: id.String()}).Err()
+	if err != nil {
+		return err
+	}
+
+	if err = c.Set(id.String(), blob, time.Duration(60)*time.Second).Err(); err != nil {
+		return err
+	}
+
+	if err := c.ZRemRangeByScore(fmt.Sprintf("thumbs/%s", key), "-inf", strconv.Itoa(int(timestamp)-60)).Err(); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func newClient() *redis.Client {
