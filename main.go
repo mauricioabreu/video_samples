@@ -67,6 +67,9 @@ func collectThumbs(path string) {
 					continue
 				}
 				log.Printf("Saved thumb for %s", "big_buck_bunny")
+				if err := os.Remove(event.Name); err != nil {
+					log.Printf("Could not remove thumb file %s: %s", event.Name, err)
+				}
 			}
 		}
 		done <- true
