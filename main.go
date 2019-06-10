@@ -92,16 +92,22 @@ func collectThumbs(path string) {
 	go func() {
 		for event := range watcher.Events {
 			if event.Op&fsnotify.Create == fsnotify.Create {
-				log.Printf("Received file %s", event.Name)
+				log.Printf("Received event: %s", event.Name)
+				pathInfo, err := os.Stat(event.Name)
+				if err != nil {
+					log.Fatalf("Could not read path metadata for %s: %s", event.Name, err)
+				}
+				if pathInfo.IsDir() {
+					watcher.Add(event.Name)
+					continue
+				}
+
 				data, err := ioutil.ReadFile(event.Name)
 				if err != nil {
 					log.Printf("Could not read file: %s", err)
 					continue
 				}
-				pathInfo, err := os.Stat(event.Name)
-				if err != nil {
-					log.Fatalf("Could not read path metadata for %s: %s", event.Name, err)
-				}
+
 				timestamp := pathInfo.ModTime().UTC().Unix()
 				streamName := getStreamName(event.Name)
 				if err := saveThumb(client, streamName, timestamp, data); err != nil {
