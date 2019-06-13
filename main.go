@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -16,21 +17,46 @@ import (
 )
 
 type stream struct {
-	name string
-	URL  string
+	Name string `json:"name"`
+	URL  string `json:"url"`
+}
+
+type source interface {
+	get() ([]stream, error)
+}
+
+// JSONSource sources loaded from JSON files
+type JSONSource struct {
+	file string
+}
+
+func (js JSONSource) get() ([]stream, error) {
+	streams := make([]stream, 0)
+	data, err := ioutil.ReadFile(js.file)
+	if err != nil {
+		return streams, err
+	}
+	if err := json.Unmarshal(data, &streams); err != nil {
+		return streams, err
+	}
+
+	return streams, nil
+}
+
+func getStreams(s source) ([]stream, error) {
+	return s.get()
 }
 
 func main() {
 	thumbsPath := "thumbnails"
-	streams := []stream{
-		stream{
-			name: "big_buck_bunny",
-			URL:  "http://127.0.0.1:8080/play/hls/bunny/index.m3u8",
-		},
+	streams, err := getStreams(JSONSource{file: "streams.json"})
+	if err != nil {
+		log.Fatalf("Could not retrieve streams to process: %s", err)
 	}
+	log.Infof("Retrieved the following streams: %+v", streams)
 	for _, s := range streams {
-		log.Debugf("Generating thumbs for %s with URL %s", s.name, s.URL)
-		generateThumb(s.URL, s.name, thumbsPath)
+		log.Debugf("Generating thumbs for %s with URL %s", s.Name, s.URL)
+		generateThumb(s.URL, s.Name, thumbsPath)
 	}
 	collectThumbs(thumbsPath)
 }
