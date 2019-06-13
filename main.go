@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -13,6 +12,7 @@ import (
 	"github.com/fsnotify/fsnotify"
 	"github.com/go-redis/redis"
 	"github.com/gofrs/uuid"
+	log "github.com/sirupsen/logrus"
 )
 
 type stream struct {
@@ -29,7 +29,7 @@ func main() {
 		},
 	}
 	for _, s := range streams {
-		log.Printf("Generating thumbs for %s with URL %s", s.name, s.URL)
+		log.Debugf("Generating thumbs for %s with URL %s", s.name, s.URL)
 		generateThumb(s.URL, s.name, thumbsPath)
 	}
 	collectThumbs(thumbsPath)
@@ -69,13 +69,13 @@ func collectThumbs(path string) {
 	client := newClient()
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
-		log.Fatal(err)
+		log.Error(err)
 	}
 	defer watcher.Close()
 
 	go func() {
 		for err := range watcher.Errors {
-			log.Println(err)
+			log.Error(err)
 		}
 	}()
 
@@ -92,7 +92,7 @@ func collectThumbs(path string) {
 	go func() {
 		for event := range watcher.Events {
 			if event.Op&fsnotify.Create == fsnotify.Create {
-				log.Printf("Received event: %s", event.Name)
+				log.Debugf("Received event: %s", event.Name)
 				pathInfo, err := os.Stat(event.Name)
 				if err != nil {
 					log.Fatalf("Could not read path metadata for %s: %s", event.Name, err)
@@ -104,19 +104,19 @@ func collectThumbs(path string) {
 
 				data, err := ioutil.ReadFile(event.Name)
 				if err != nil {
-					log.Printf("Could not read file: %s", err)
+					log.Errorf("Could not read file: %s", err)
 					continue
 				}
 
 				timestamp := pathInfo.ModTime().UTC().Unix()
 				streamName := getStreamName(event.Name)
 				if err := saveThumb(client, streamName, timestamp, data); err != nil {
-					log.Printf("Could not save thumbs for %s: %s", streamName, err)
+					log.Debugf("Could not save thumbs for %s: %s", streamName, err)
 					continue
 				}
-				log.Printf("Saved thumb for %s", streamName)
+				log.Debugf("Saved thumb for %s", streamName)
 				if err := os.Remove(event.Name); err != nil {
-					log.Printf("Could not remove thumb file %s: %s", event.Name, err)
+					log.Debugf("Could not remove thumb file %s: %s", event.Name, err)
 				}
 			}
 		}
@@ -125,7 +125,7 @@ func collectThumbs(path string) {
 
 	select {
 	case <-done:
-		log.Print("Done watching files...")
+		log.Info("Done watching files...")
 	}
 }
 
@@ -162,6 +162,6 @@ func newClient() *redis.Client {
 		DB:       0,
 	})
 	pong, err := client.Ping().Result()
-	log.Println(pong, err)
+	log.Info(pong, err)
 	return client
 }
