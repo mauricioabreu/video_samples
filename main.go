@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -25,14 +26,38 @@ type source interface {
 	get() ([]stream, error)
 }
 
-// JSONSource sources loaded from JSON files
+// JSONSource streams loaded from JSON files
 type JSONSource struct {
 	file string
+}
+
+// HTTPSource streams loaded from HTTP responses
+type HTTPSource struct {
+	URL     string
+	Timeout time.Duration
 }
 
 func (js JSONSource) get() ([]stream, error) {
 	streams := make([]stream, 0)
 	data, err := ioutil.ReadFile(js.file)
+	if err != nil {
+		return streams, err
+	}
+	if err := json.Unmarshal(data, &streams); err != nil {
+		return streams, err
+	}
+
+	return streams, nil
+}
+
+func (h HTTPSource) get() ([]stream, error) {
+	streams := make([]stream, 0)
+	netClient := http.Client{Timeout: h.Timeout}
+	response, err := netClient.Get(h.URL)
+	if err != nil {
+		return streams, err
+	}
+	data, err := ioutil.ReadAll(response.Body)
 	if err != nil {
 		return streams, err
 	}
