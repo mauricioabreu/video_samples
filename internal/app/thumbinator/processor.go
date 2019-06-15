@@ -1,4 +1,4 @@
-package main
+package thumbinator
 
 import (
 	"encoding/json"
@@ -17,18 +17,18 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-type stream struct {
+type Stream struct {
 	Name string `json:"name"`
 	URL  string `json:"url"`
 }
 
 type source interface {
-	get() ([]stream, error)
+	get() ([]Stream, error)
 }
 
 // JSONSource streams loaded from JSON files
 type JSONSource struct {
-	file string
+	File string
 }
 
 // HTTPSource streams loaded from HTTP responses
@@ -37,9 +37,9 @@ type HTTPSource struct {
 	Timeout time.Duration
 }
 
-func (js JSONSource) get() ([]stream, error) {
-	streams := make([]stream, 0)
-	data, err := ioutil.ReadFile(js.file)
+func (js JSONSource) get() ([]Stream, error) {
+	streams := make([]Stream, 0)
+	data, err := ioutil.ReadFile(js.File)
 	if err != nil {
 		return streams, err
 	}
@@ -50,8 +50,8 @@ func (js JSONSource) get() ([]stream, error) {
 	return streams, nil
 }
 
-func (h HTTPSource) get() ([]stream, error) {
-	streams := make([]stream, 0)
+func (h HTTPSource) get() ([]Stream, error) {
+	streams := make([]Stream, 0)
 	netClient := http.Client{Timeout: h.Timeout}
 	response, err := netClient.Get(h.URL)
 	if err != nil {
@@ -68,22 +68,9 @@ func (h HTTPSource) get() ([]stream, error) {
 	return streams, nil
 }
 
-func getStreams(s source) ([]stream, error) {
+// GetStreams retrieve a list of streams to process
+func GetStreams(s source) ([]Stream, error) {
 	return s.get()
-}
-
-func main() {
-	thumbsPath := "thumbnails"
-	streams, err := getStreams(JSONSource{file: "streams.json"})
-	if err != nil {
-		log.Fatalf("Could not retrieve streams to process: %s", err)
-	}
-	log.Infof("Retrieved the following streams: %+v", streams)
-	for _, s := range streams {
-		log.Debugf("Generating thumbs for %s with URL %s", s.Name, s.URL)
-		generateThumb(s.URL, s.Name, thumbsPath)
-	}
-	collectThumbs(thumbsPath)
 }
 
 func createDir(path string) {
@@ -92,7 +79,8 @@ func createDir(path string) {
 	}
 }
 
-func generateThumb(streamingURL string, streamName string, path string) {
+// GenerateThumb start ffmpeg process to create thumbs
+func GenerateThumb(streamingURL string, streamName string, path string) {
 	createDir(filepath.Join(path, streamName))
 	args := []string{"-live_start_index", "-1", "-f", "hls", "-i", fmt.Sprintf("%s", streamingURL), "-vf", "fps=1,scale=-1:169", "-vsync", "vfr", "-q:v", "5", "-threads", "1", fmt.Sprintf("%s/%s/%%09d.jpg", path, streamName)}
 	cmd := exec.Command("ffmpeg", args...)
@@ -116,7 +104,8 @@ func getSubDirs(sourcePath string) []string {
 	return paths
 }
 
-func collectThumbs(path string) {
+// CollectThumbs save all thumbs into redis
+func CollectThumbs(path string) {
 	client := newClient()
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
