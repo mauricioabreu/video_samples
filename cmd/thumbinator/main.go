@@ -36,5 +36,5 @@ func Main() {
 		log.Debugf("Generating thumbs for %s with URL %s", s.Name, s.URL)
 		thumbinator.GenerateThumb(s.URL, s.Name, thumbsPath)
 	}
-	thumbinator.CollectThumbs(thumbsPath)
+	thumbinator.CollectThumbs(streams, thumbsPath)
 }

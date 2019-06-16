@@ -2,6 +2,7 @@ package thumbinator
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -20,6 +21,7 @@ import (
 type Stream struct {
 	Name string `json:"name"`
 	URL  string `json:"url"`
+	TTL  int    `json:"ttl"`
 }
 
 type source interface {
@@ -105,7 +107,7 @@ func getSubDirs(sourcePath string) []string {
 }
 
 // CollectThumbs save all thumbs into redis
-func CollectThumbs(path string) {
+func CollectThumbs(streams []Stream, path string) {
 	client := newClient()
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
@@ -149,12 +151,15 @@ func CollectThumbs(path string) {
 				}
 
 				timestamp := pathInfo.ModTime().UTC().Unix()
-				streamName := getStreamName(event.Name)
-				if err := saveThumb(client, streamName, timestamp, data); err != nil {
-					log.Debugf("Could not save thumbs for %s: %s", streamName, err)
+				stream, err := getStream(getStreamName(event.Name), streams)
+				if err != nil {
+					log.Error(err)
+				}
+				if err := saveThumb(client, stream, timestamp, data); err != nil {
+					log.Debugf("Could not save thumbs for %s: %s", stream.Name, err)
 					continue
 				}
-				log.Debugf("Saved thumb for %s", streamName)
+				log.Debugf("Saved thumb for %s", stream.Name)
 				if err := os.Remove(event.Name); err != nil {
 					log.Debugf("Could not remove thumb file %s: %s", event.Name, err)
 				}
@@ -173,22 +178,31 @@ func getStreamName(filename string) string {
 	return filepath.Base(filepath.Dir(filename))
 }
 
-func saveThumb(c *redis.Client, key string, timestamp int64, blob []byte) error {
+func getStream(streamName string, streams []Stream) (Stream, error) {
+	for _, s := range streams {
+		if s.Name == streamName {
+			return s, nil
+		}
+	}
+	return Stream{}, errors.New("stream not found")
+}
+
+func saveThumb(c *redis.Client, stream Stream, timestamp int64, blob []byte) error {
 	id, err := uuid.NewV4()
 	if err != nil {
 		return err
 	}
 
-	err = c.ZAdd(fmt.Sprintf("thumbs/%s", key), redis.Z{Score: float64(timestamp), Member: id.String()}).Err()
+	err = c.ZAdd(fmt.Sprintf("thumbs/%s", stream.Name), redis.Z{Score: float64(timestamp), Member: id.String()}).Err()
 	if err != nil {
 		return err
 	}
 
-	if err = c.Set(fmt.Sprintf("thumbs/blob/%s", id.String()), blob, time.Duration(60)*time.Second).Err(); err != nil {
+	if err = c.Set(fmt.Sprintf("thumbs/blob/%s", id.String()), blob, time.Duration(stream.TTL)*time.Second).Err(); err != nil {
 		return err
 	}
 
-	if err := c.ZRemRangeByScore(fmt.Sprintf("thumbs/%s", key), "-inf", strconv.Itoa(int(timestamp)-60)).Err(); err != nil {
+	if err := c.ZRemRangeByScore(fmt.Sprintf("thumbs/%s", stream.Name), "-inf", strconv.Itoa(int(timestamp)-stream.TTL)).Err(); err != nil {
 		return err
 	}
 
