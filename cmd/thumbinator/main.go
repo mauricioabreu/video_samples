@@ -8,6 +8,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var thumbsPath string
+
 var runCmd = &cobra.Command{
 	Use:   "thumbinator",
 	Short: "Generate thumbs from live streamings and videos on demand",
@@ -18,6 +20,7 @@ var runCmd = &cobra.Command{
 
 // Run thumbinator, run
 func Run() {
+	runCmd.Flags().StringVarP(&thumbsPath, "thumbsPath", "", "thumbnails", "Path where all thumbs will be written to")
 	if err := runCmd.Execute(); err != nil {
 		log.Fatal(err)
 		os.Exit(1)
@@ -26,7 +29,6 @@ func Run() {
 
 // Main run thumbinator, run
 func Main() {
-	thumbsPath := "thumbnails"
 	streams, err := thumbinator.GetStreams(thumbinator.JSONSource{File: "streams.json"})
 	if err != nil {
 		log.Fatalf("Could not retrieve streams to process: %s", err)
