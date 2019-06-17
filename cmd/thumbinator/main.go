@@ -9,6 +9,7 @@ import (
 )
 
 var thumbsPath string
+var streamsFile string
 
 var runCmd = &cobra.Command{
 	Use:   "thumbinator",
@@ -20,7 +21,8 @@ var runCmd = &cobra.Command{
 
 // Run thumbinator, run
 func Run() {
-	runCmd.Flags().StringVarP(&thumbsPath, "thumbsPath", "", "thumbnails", "Path where all thumbs will be written to")
+	runCmd.Flags().StringVar(&thumbsPath, "thumbsPath", "thumbnails", "Path where all thumbs will be written to")
+	runCmd.Flags().StringVar(&streamsFile, "streamsFile", "streams.json", "File with streams to extract thumbs")
 	if err := runCmd.Execute(); err != nil {
 		log.Fatal(err)
 		os.Exit(1)
@@ -29,7 +31,7 @@ func Run() {
 
 // Main run thumbinator, run
 func Main() {
-	streams, err := thumbinator.GetStreams(thumbinator.JSONSource{File: "streams.json"})
+	streams, err := thumbinator.GetStreams(thumbinator.JSONSource{File: streamsFile})
 	if err != nil {
 		log.Fatalf("Could not retrieve streams to process: %s", err)
 	}
