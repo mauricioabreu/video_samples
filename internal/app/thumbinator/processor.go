@@ -208,14 +208,3 @@ func saveThumb(c *redis.Client, stream Stream, timestamp int64, blob []byte) err
 
 	return nil
 }
-
-func newClient() *redis.Client {
-	client := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
-		Password: "",
-		DB:       0,
-	})
-	pong, err := client.Ping().Result()
-	log.Info(pong, err)
-	return client
-}
