@@ -11,4 +11,4 @@ redis:
 	docker run -d -p 6379:6379 redis
 
 run:
-	go run main.go
+	go run main.go generate

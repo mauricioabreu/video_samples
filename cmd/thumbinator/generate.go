@@ -11,8 +11,8 @@ import (
 var thumbsPath string
 var streamsFile string
 
-var runCmd = &cobra.Command{
-	Use:   "thumbinator",
+var generateCmd = &cobra.Command{
+	Use:   "generate",
 	Short: "Generate thumbs from live streamings and videos on demand",
 	Run: func(cmd *cobra.Command, args []string) {
 		Main()
@@ -21,9 +21,7 @@ var runCmd = &cobra.Command{
 
 // Run thumbinator, run
 func Run() {
-	runCmd.Flags().StringVar(&thumbsPath, "thumbsPath", "thumbnails", "Path where all thumbs will be written to")
-	runCmd.Flags().StringVar(&streamsFile, "streamsFile", "streams.json", "File with streams to extract thumbs")
-	if err := runCmd.Execute(); err != nil {
+	if err := generateCmd.Execute(); err != nil {
 		log.Fatal(err)
 		os.Exit(1)
 	}
@@ -41,4 +39,10 @@ func Main() {
 		thumbinator.GenerateThumb(s.URL, s.Name, thumbsPath)
 	}
 	thumbinator.CollectThumbs(streams, thumbsPath)
+}
+
+func init() {
+	generateCmd.Flags().StringVar(&thumbsPath, "thumbsPath", "thumbnails", "Path where all thumbs will be written to")
+	generateCmd.Flags().StringVar(&streamsFile, "streamsFile", "streams.json", "File with streams to extract thumbs")
+	rootCmd.AddCommand(generateCmd)
 }
