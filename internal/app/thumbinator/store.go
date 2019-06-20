@@ -1,7 +1,12 @@
 package thumbinator
 
 import (
+	"fmt"
+	"strconv"
+	"time"
+
 	"github.com/go-redis/redis"
+	"github.com/gofrs/uuid"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -18,6 +23,7 @@ func newClient() *redis.Client {
 
 type store interface {
 	GetThumb(streamName string) string
+	SaveThumb(stream Stream, timestamp int64, blob []byte) error
 }
 
 type redisStore struct {
@@ -38,4 +44,26 @@ func (rs redisStore) GetThumb(streamName string) string {
 		log.Fatal(err)
 	}
 	return thumb
+}
+
+func (rs redisStore) SaveThumb(stream Stream, timestamp int64, blob []byte) error {
+	id, err := uuid.NewV4()
+	if err != nil {
+		return err
+	}
+
+	err = rs.client.ZAdd(fmt.Sprintf("thumbs/%s", stream.Name), redis.Z{Score: float64(timestamp), Member: id.String()}).Err()
+	if err != nil {
+		return err
+	}
+
+	if err = rs.client.Set(fmt.Sprintf("thumbs/blob/%s", id.String()), blob, time.Duration(stream.TTL)*time.Second).Err(); err != nil {
+		return err
+	}
+
+	if err := rs.client.ZRemRangeByScore(fmt.Sprintf("thumbs/%s", stream.Name), "-inf", strconv.Itoa(int(timestamp)-stream.TTL)).Err(); err != nil {
+		return err
+	}
+
+	return nil
 }

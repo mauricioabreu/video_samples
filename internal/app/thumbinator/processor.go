@@ -9,12 +9,9 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strconv"
 	"time"
 
 	"github.com/fsnotify/fsnotify"
-	"github.com/go-redis/redis"
-	"github.com/gofrs/uuid"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -108,7 +105,7 @@ func getSubDirs(sourcePath string) []string {
 
 // CollectThumbs save all thumbs into redis
 func CollectThumbs(streams []Stream, path string) {
-	client := newClient()
+	store := newRedisStore()
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
 		log.Error(err)
@@ -155,7 +152,7 @@ func CollectThumbs(streams []Stream, path string) {
 				if err != nil {
 					log.Error(err)
 				}
-				if err := saveThumb(client, stream, timestamp, data); err != nil {
+				if err := store.SaveThumb(stream, timestamp, data); err != nil {
 					log.Debugf("Could not save thumbs for %s: %s", stream.Name, err)
 					continue
 				}
@@ -185,26 +182,4 @@ func getStream(streamName string, streams []Stream) (Stream, error) {
 		}
 	}
 	return Stream{}, errors.New("stream not found")
-}
-
-func saveThumb(c *redis.Client, stream Stream, timestamp int64, blob []byte) error {
-	id, err := uuid.NewV4()
-	if err != nil {
-		return err
-	}
-
-	err = c.ZAdd(fmt.Sprintf("thumbs/%s", stream.Name), redis.Z{Score: float64(timestamp), Member: id.String()}).Err()
-	if err != nil {
-		return err
-	}
-
-	if err = c.Set(fmt.Sprintf("thumbs/blob/%s", id.String()), blob, time.Duration(stream.TTL)*time.Second).Err(); err != nil {
-		return err
-	}
-
-	if err := c.ZRemRangeByScore(fmt.Sprintf("thumbs/%s", stream.Name), "-inf", strconv.Itoa(int(timestamp)-stream.TTL)).Err(); err != nil {
-		return err
-	}
-
-	return nil
 }
