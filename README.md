@@ -3,6 +3,9 @@
 <p align="center">
   <img src="https://github.com/mauricioabreu/thumbinator/raw/master/docs/thumbinator.png?raw=true" width="500">
   <p align="center">Generate thumbs from live streamings and videos on demand</p>
+  <p align="center">
+    <img src="https://travis-ci.org/mauricioabreu/thumbinator.svg?branch=master">
+  </p>
 </p>
 
 ## Project goals
