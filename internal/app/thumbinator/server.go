@@ -3,6 +3,7 @@ package thumbinator
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -13,7 +14,14 @@ type Server struct {
 }
 
 func (s Server) showSnapshot(w http.ResponseWriter, r *http.Request) {
-	thumb := s.store.GetThumb("big_buck_bunny")
+	var thumb string
+	timestamp, ok := r.URL.Query()["timestamp"]
+	if ok {
+		n, _ := strconv.ParseInt(timestamp[0], 10, 64)
+		thumb = s.store.GetThumbByTimestamp("big_buck_bunny", n)
+	} else {
+		thumb = s.store.GetThumb("big_buck_bunny")
+	}
 	w.Header().Add("Content-Type", "image/jpeg")
 	fmt.Fprint(w, thumb)
 }

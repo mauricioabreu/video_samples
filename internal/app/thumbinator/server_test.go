@@ -12,6 +12,10 @@ func (ds dummyStore) GetThumb(streamName string) string {
 	return "thumb_blob_here"
 }
 
+func (ds dummyStore) GetThumbByTimestamp(streamName string, timestamp int64) string {
+	return "thumb_blob_here"
+}
+
 func (ds dummyStore) SaveThumb(stream Stream, timestamp int64, blob []byte) error {
 	return nil
 }
