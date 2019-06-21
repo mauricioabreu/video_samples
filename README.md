@@ -1,7 +1,7 @@
 # thumbinator
 
 <p align="center">
-  <img src="https://github.com/mauricioabreu/thumbinator/raw/master/docs/thumbinator.png?raw=true" width="400">
+  <img src="https://github.com/mauricioabreu/thumbinator/raw/master/docs/thumbinator.png?raw=true" width="500">
   <p align="center">Generate thumbs from live streamings and videos on demand</p>
 </p>
 
