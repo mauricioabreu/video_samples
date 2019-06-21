@@ -81,7 +81,7 @@ func createDir(path string) {
 // GenerateThumb start ffmpeg process to create thumbs
 func GenerateThumb(streamingURL string, streamName string, path string) {
 	createDir(filepath.Join(path, streamName))
-	args := []string{"-live_start_index", "-1", "-f", "hls", "-i", fmt.Sprintf("%s", streamingURL), "-vf", "fps=1,scale=-1:169", "-vsync", "vfr", "-q:v", "5", "-threads", "1", fmt.Sprintf("%s/%s/%%09d.jpg", path, streamName)}
+	args := []string{"-live_start_index", "-1", "-f", "hls", "-i", fmt.Sprintf("%s", streamingURL), "-vf", "fps=1,scale=-1:360", "-vsync", "vfr", "-q:v", "5", "-threads", "1", fmt.Sprintf("%s/%s/%%09d.jpg", path, streamName)}
 	cmd := exec.Command("ffmpeg", args...)
 	err := cmd.Start()
 	if err != nil {
