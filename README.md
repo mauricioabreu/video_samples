@@ -2,7 +2,7 @@
 
 Generate thumbs from live streamings and videos on demand
 
-![Architecture](/docs/thumbinator.jpg)
+![Architecture](/docs/thumbinator.png)
 
 ## Project goals
 
