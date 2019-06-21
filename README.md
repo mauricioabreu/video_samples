@@ -2,6 +2,8 @@
 
 Generate thumbs from live streamings and videos on demand
 
+![Architecture](/docs/thumbinator.jpg)
+
 ## Project goals
 
 * Generate thumbs for live streaming videos
