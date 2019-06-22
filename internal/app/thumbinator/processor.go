@@ -9,10 +9,16 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
+	"strconv"
 	"time"
 
 	"github.com/fsnotify/fsnotify"
 	log "github.com/sirupsen/logrus"
+)
+
+const (
+	sampleRate = 2
 )
 
 type Stream struct {
@@ -132,6 +138,12 @@ func CollectThumbs(streams []Stream, path string) {
 		for event := range watcher.Events {
 			if event.Op&fsnotify.Create == fsnotify.Create {
 				log.Debugf("Received event: %s", event.Name)
+				if seq, err := getSeqNumber(event.Name); err != nil {
+					if seq % sampleRate != 0 {
+						continue
+					}
+				}
+
 				pathInfo, err := os.Stat(event.Name)
 				if err != nil {
 					log.Fatalf("Could not read path metadata for %s: %s", event.Name, err)
@@ -169,6 +181,15 @@ func CollectThumbs(streams []Stream, path string) {
 	case <-done:
 		log.Info("Done watching files...")
 	}
+}
+
+func getSeqNumber(filename string) (int, error) {
+	onlyNumbersRegex := regexp.MustCompile("(\\d+)")
+	seq, err := strconv.Atoi(onlyNumbersRegex.FindAllString(filepath.Base(filename), -1)[0])
+	if err != nil {
+		return 0, fmt.Errorf("could not convert %s to int", filename)
+	}
+	return seq, nil
 }
 
 func getStreamName(filename string) string {
