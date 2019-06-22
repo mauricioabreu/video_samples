@@ -144,6 +144,9 @@ func CollectThumbs(streams []Stream, path string) {
 					continue
 				}
 				if seq%sampleRate != 0 {
+					if err := os.Remove(event.Name); err != nil {
+						log.Debugf("Could not remove thumb file %s: %s", event.Name, err)
+					}
 					continue
 				}
 
