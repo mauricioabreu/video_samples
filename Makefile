@@ -12,3 +12,6 @@ redis:
 
 run:
 	go run main.go generate
+
+test:
+	go test --race ./...
