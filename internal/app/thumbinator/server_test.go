@@ -22,7 +22,7 @@ func (ds dummyStore) SaveThumb(stream Stream, timestamp int64, blob []byte) erro
 
 func TestRetrieveSnapshot(t *testing.T) {
 	server := Server{store: dummyStore{}}
-	req, err := http.NewRequest("GET", "/", nil)
+	req, err := http.NewRequest("GET", "/?stream_name=big_buck_bunny", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -47,7 +47,7 @@ func TestRetrieveSnapshot(t *testing.T) {
 
 func TestRetrieveSnapshotByTimestamp(t *testing.T) {
 	server := Server{store: dummyStore{}}
-	req, err := http.NewRequest("GET", "/?timestamp=1561204928", nil)
+	req, err := http.NewRequest("GET", "/?stream_name=big_buck_bunny&timestamp=1561204928", nil)
 	if err != nil {
 		t.Fatal(err)
 	}

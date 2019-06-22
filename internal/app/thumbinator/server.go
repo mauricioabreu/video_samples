@@ -3,6 +3,7 @@ package thumbinator
 import (
 	"fmt"
 	"net/http"
+	"net/url"
 	"strconv"
 
 	log "github.com/sirupsen/logrus"
@@ -13,14 +14,36 @@ type Server struct {
 	store store
 }
 
+// queryBy arguments used to retrieve thumbs
+type queryBy struct {
+	streamName string
+	timestamp  int64
+}
+
+func parseQuery(u *url.URL) queryBy {
+	qb := queryBy{}
+	streamName := u.Query().Get("stream_name")
+	qb.streamName = streamName
+	timestamp := u.Query().Get("timestamp")
+	if timestamp != "" {
+		n, _ := strconv.ParseInt(timestamp, 10, 64)
+		qb.timestamp = n
+	}
+	return qb
+}
+
 func (s Server) showSnapshot(w http.ResponseWriter, r *http.Request) {
 	var thumb string
-	timestamp, ok := r.URL.Query()["timestamp"]
-	if ok {
-		n, _ := strconv.ParseInt(timestamp[0], 10, 64)
-		thumb = s.store.GetThumbByTimestamp("big_buck_bunny", n)
+	qb := parseQuery(r.URL)
+	if qb.streamName == "" {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	if qb.timestamp > 0 {
+		thumb = s.store.GetThumbByTimestamp(qb.streamName, qb.timestamp)
 	} else {
-		thumb = s.store.GetThumb("big_buck_bunny")
+		thumb = s.store.GetThumb(qb.streamName)
 	}
 	w.Header().Add("Content-Length", strconv.Itoa(len(thumb)))
 	w.Header().Add("Content-Type", "image/jpeg")
