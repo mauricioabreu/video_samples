@@ -138,10 +138,13 @@ func CollectThumbs(streams []Stream, path string) {
 		for event := range watcher.Events {
 			if event.Op&fsnotify.Create == fsnotify.Create {
 				log.Debugf("Received event: %s", event.Name)
-				if seq, err := getSeqNumber(event.Name); err != nil {
-					if seq % sampleRate != 0 {
-						continue
-					}
+				seq, err := getSeqNumber(event.Name)
+				if err != nil {
+					log.Error(err)
+					continue
+				}
+				if seq%sampleRate != 0 {
+					continue
 				}
 
 				pathInfo, err := os.Stat(event.Name)
