@@ -21,3 +21,4 @@
 * `make ingest` - Ingest a video to be handle by nginx-ts (big buck bunny strikes again)
 * `make redis` - Run a redis instance to save all the generated thumbs
 * `make run` - Run the thumbinator program
+* `make test` - Run test suite
