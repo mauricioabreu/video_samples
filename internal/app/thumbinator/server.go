@@ -22,6 +22,7 @@ func (s Server) showSnapshot(w http.ResponseWriter, r *http.Request) {
 	} else {
 		thumb = s.store.GetThumb("big_buck_bunny")
 	}
+	w.Header().Add("Content-Length", strconv.Itoa(len(thumb)))
 	w.Header().Add("Content-Type", "image/jpeg")
 	fmt.Fprint(w, thumb)
 }
