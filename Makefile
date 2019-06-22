@@ -15,3 +15,6 @@ run:
 
 test:
 	go test --race ./...
+
+edge:
+	go run main.go server

@@ -22,3 +22,4 @@
 * `make redis` - Run a redis instance to save all the generated thumbs
 * `make run` - Run the thumbinator program
 * `make test` - Run test suite
+* `make edge` - Run an HTTP server to delivery our nice thumbnails

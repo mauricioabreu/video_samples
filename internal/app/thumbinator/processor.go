@@ -21,6 +21,7 @@ const (
 	sampleRate = 2
 )
 
+// Stream represent a stream to be processed
 type Stream struct {
 	Name string `json:"name"`
 	URL  string `json:"url"`
