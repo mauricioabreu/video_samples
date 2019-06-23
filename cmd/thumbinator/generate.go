@@ -3,6 +3,7 @@ package cmd
 import (
 	"os"
 
+	"github.com/fsnotify/fsnotify"
 	"github.com/mauricioabreu/thumbinator/internal/app/thumbinator"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -38,7 +39,12 @@ func Main() {
 		log.Debugf("Generating thumbs for %s with URL %s", s.Name, s.URL)
 		thumbinator.GenerateThumb(s.URL, s.Name, thumbsPath)
 	}
-	thumbinator.CollectThumbs(streams, thumbsPath)
+	watcher, err := fsnotify.NewWatcher()
+	if err != nil {
+		log.Error(err)
+	}
+	collector := thumbinator.Collector{Watcher: watcher, Store: thumbinator.NewRedisStore(), Path: thumbsPath}
+	collector.CollectThumbs(streams)
 }
 
 func init() {

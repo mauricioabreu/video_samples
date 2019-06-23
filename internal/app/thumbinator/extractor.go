@@ -21,6 +21,13 @@ const (
 	sampleRate = 2
 )
 
+type Collector struct {
+	Watcher   *fsnotify.Watcher
+	Store     store
+	Path      string
+	Recursive bool
+}
+
 // Stream represent a stream to be processed
 type Stream struct {
 	Name string `json:"name"`
@@ -111,32 +118,25 @@ func getSubDirs(sourcePath string) []string {
 }
 
 // CollectThumbs save all thumbs into redis
-func CollectThumbs(streams []Stream, path string) {
-	store := newRedisStore()
-	watcher, err := fsnotify.NewWatcher()
-	if err != nil {
-		log.Error(err)
-	}
-	defer watcher.Close()
-
+func (c Collector) CollectThumbs(streams []Stream) {
 	go func() {
-		for err := range watcher.Errors {
+		for err := range c.Watcher.Errors {
 			log.Error(err)
 		}
 	}()
 
-	if err := watcher.Add(path); err != nil {
+	if err := c.Watcher.Add(c.Path); err != nil {
 		log.Fatal(err)
 	}
-	for _, d := range getSubDirs(path) {
-		if err := watcher.Add(d); err != nil {
+	for _, d := range getSubDirs(c.Path) {
+		if err := c.Watcher.Add(d); err != nil {
 			log.Fatal(err)
 		}
 	}
 
 	done := make(chan bool)
 	go func() {
-		for event := range watcher.Events {
+		for event := range c.Watcher.Events {
 			if event.Op&fsnotify.Create == fsnotify.Create {
 				log.Debugf("Received event: %s", event.Name)
 				seq, err := getSeqNumber(event.Name)
@@ -156,7 +156,7 @@ func CollectThumbs(streams []Stream, path string) {
 					log.Fatalf("Could not read path metadata for %s: %s", event.Name, err)
 				}
 				if pathInfo.IsDir() {
-					watcher.Add(event.Name)
+					c.Watcher.Add(event.Name)
 					continue
 				}
 
@@ -171,7 +171,7 @@ func CollectThumbs(streams []Stream, path string) {
 				if err != nil {
 					log.Error(err)
 				}
-				if err := store.SaveThumb(stream, timestamp, data); err != nil {
+				if err := c.Store.SaveThumb(stream, timestamp, data); err != nil {
 					log.Debugf("Could not save thumbs for %s: %s", stream.Name, err)
 					continue
 				}

@@ -52,7 +52,7 @@ func (s Server) showSnapshot(w http.ResponseWriter, r *http.Request) {
 
 // Serve start HTTP server to show thumbs
 func Serve() {
-	server := Server{store: newRedisStore()}
+	server := Server{store: NewRedisStore()}
 	http.HandleFunc("/", server.showSnapshot)
 	log.Fatal(http.ListenAndServe(":8181", nil))
 }
