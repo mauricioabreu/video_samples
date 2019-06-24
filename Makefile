@@ -14,7 +14,7 @@ run:
 	go run main.go generate
 
 test:
-	go test --race ./...
+	go test --race -coverprofile=coverage.txt -covermode=atomic ./...
 
 edge:
 	go run main.go server
