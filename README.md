@@ -18,6 +18,53 @@
 * Generate thumbs for live streaming videos
 * Easy to deploy and run
 
+## Trying it out!
+
+This project comes with tools to try it locally, without having a real live streaming on the internet.
+To achieve it we use some open source technologies like `ffmpeg` and `nginx-ts`.
+
+First, we need to start a `nginx` server to produce our streaming playlists:
+```
+make server
+```
+
+**p.s**: first run will take some time because it will compile and generate an image with `nginx-ts`.
+
+Now that we have a streaming server we can `ingest` a video. You can use the well known [Big Buck Bunny](https://peach.blender.org/download/)
+
+```
+make ingest
+```
+
+[VLC](https://www.videolan.org/vlc/) can be used to test if our streaming works.
+
+## Generating thumbs
+
+Regardless of having local or online live streamings, we use `thumbinator` to generate thumbs.
+We have a `streams.json` file that serves as example to determine which URLs will be consumed to produce our thumbs.
+
+`thumbinator` comes with two entrypoints: `generate` and `server`
+
+### Generate
+
+Start a program to extract, collect and save thumbs on `redis`:
+
+```console
+thumbinator generate
+```
+
+Start an HTTP server to query the saved thumbs for the given stream:
+
+```console
+thumbinator server
+```
+
+For both commands you can get help:
+
+```console
+thumbinator help <command>
+```
+
 ## Commands
 > Available make commands
 
