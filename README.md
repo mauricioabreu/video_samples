@@ -18,6 +18,16 @@
 * Generate thumbs for live streaming videos
 * Easy to deploy and run
 
+## Installing
+
+Currently we only support installing `thumbinator` from source:
+
+```console
+git clone git@github.com:mauricioabreu/thumbinator.git
+cd thumbinator
+make install
+```
+
 ## Trying it out!
 
 This project comes with tools to try it locally, without having a real live streaming on the internet.

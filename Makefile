@@ -19,4 +19,7 @@ test:
 edge:
 	go run main.go server
 
+install:
+	go install
+
 .PHONY: build-server server ingest redis run test edge
