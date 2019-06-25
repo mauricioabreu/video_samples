@@ -38,7 +38,7 @@ make ingest
 
 [VLC](https://www.videolan.org/vlc/) can be used to test if our streaming works.
 
-## Generating thumbs
+## Extracting thumbs
 
 Regardless of having local or online live streamings, we use `thumbinator` to generate thumbs.
 We have a `streams.json` file that serves as example to determine which URLs will be consumed to produce our thumbs.
@@ -52,6 +52,8 @@ Start a program to extract, collect and save thumbs on `redis`:
 ```console
 thumbinator generate
 ```
+
+### Server
 
 Start an HTTP server to query the saved thumbs for the given stream:
 
