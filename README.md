@@ -28,6 +28,9 @@ cd thumbinator
 make install
 ```
 
+`make build` can also be used if you don't want to add `GOBIN` to your global path and want to use
+the binary distribution the way you want.
+
 ## Trying it out!
 
 This project comes with tools to try it locally, without having a real live streaming on the internet.

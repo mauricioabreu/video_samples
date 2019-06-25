@@ -19,6 +19,9 @@ test:
 edge:
 	go run main.go server
 
+build:
+	go build -o thumbinator
+
 install:
 	go install
 
