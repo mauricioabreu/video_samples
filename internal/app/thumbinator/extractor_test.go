@@ -1,13 +1,12 @@
 package thumbinator
 
 import (
-	"io/ioutil"
 	"os"
+	"path/filepath"
 	"testing"
 	"time"
 
 	"github.com/fsnotify/fsnotify"
-	log "github.com/sirupsen/logrus"
 )
 
 func TestCollectThumbs(t *testing.T) {
@@ -20,22 +19,33 @@ func TestCollectThumbs(t *testing.T) {
 	}
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
-		log.Error(err)
+		t.Fatal(err)
 	}
-	collector := Collector{Watcher: watcher, Store: dummyStore{}, Path: "../../../test/testdata/thumbnails"}
-	go collector.CollectThumbs(streams)
-	// Create a file system event so the collector wakes up
-	thumbFile := "../../../test/testdata/thumbnails/000000001.jpg"
-	err = ioutil.WriteFile(thumbFile, []byte("foobar"), 0644)
-	if err != nil {
-		panic(err)
+	thumbsPath, _ := filepath.Abs("../../../test/testdata/thumbnails")
+	ds := dummyStore{data: make(map[string][]byte, 0)}
+	collector := Collector{
+		Watcher: watcher,
+		Store:   ds,
+		Path:    thumbsPath,
 	}
-	// Give system time to sync write changes
+	go func() {
+		collector.CollectThumbs(streams)
+	}()
 	time.Sleep(50 * time.Millisecond)
-	collector.Watcher.Close()
-	err = os.Remove(thumbFile)
+	// Create a file system event so the collector wakes up
+	thumbFile, _ := filepath.Abs("../../../test/testdata/thumbnails/big_buck_bunny/000000002.jpg")
+	file, err := os.OpenFile(thumbFile, os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
-		panic(err)
+		t.Fatal(err)
 	}
+	file.Sync()
+	time.Sleep(50 * time.Millisecond)
 
+	file.WriteString("foobar")
+	file.Sync()
+	file.Close()
+	time.Sleep(50 * time.Millisecond)
+
+	collector.Watcher.Close()
+	os.Remove(thumbFile)
 }

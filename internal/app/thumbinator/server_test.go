@@ -6,7 +6,9 @@ import (
 	"testing"
 )
 
-type dummyStore struct{}
+type dummyStore struct {
+	data map[string][]byte
+}
 
 func (ds dummyStore) GetThumb(streamName string) string {
 	return "thumb_blob_here"
@@ -17,6 +19,7 @@ func (ds dummyStore) GetThumbByTimestamp(streamName string, timestamp int64) str
 }
 
 func (ds dummyStore) SaveThumb(stream Stream, timestamp int64, blob []byte) error {
+	ds.data[stream.Name] = blob
 	return nil
 }
 
