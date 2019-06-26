@@ -90,3 +90,5 @@ thumbinator help <command>
 * `make run` - Run the thumbinator program
 * `make test` - Run test suite
 * `make edge` - Run an HTTP server to delivery our nice thumbnails
+* `make build` - Compile thumbinator package
+* `make install` - Compile and install thumbinator package
