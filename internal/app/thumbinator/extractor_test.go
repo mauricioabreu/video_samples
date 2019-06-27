@@ -38,9 +38,6 @@ func TestCollectThumbs(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	file.Sync()
-	time.Sleep(50 * time.Millisecond)
-
 	file.WriteString("foobar")
 	file.Sync()
 	file.Close()
@@ -48,4 +45,7 @@ func TestCollectThumbs(t *testing.T) {
 
 	collector.Watcher.Close()
 	os.Remove(thumbFile)
+	if string(ds.data["big_buck_bunny"]) != "foobar" {
+		t.Errorf("Wrong thumb blob saved. Got %v wanted %v", string(ds.data["big_buck_bunny"]), "foobar")
+	}
 }
