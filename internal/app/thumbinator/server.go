@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -34,6 +35,7 @@ func parseQuery(u *url.URL) queryBy {
 
 func (s Server) showSnapshot(w http.ResponseWriter, r *http.Request) {
 	var thumb string
+	var maxAge int
 	qb := parseQuery(r.URL)
 	if qb.streamName == "" {
 		w.WriteHeader(http.StatusNotFound)
@@ -42,11 +44,15 @@ func (s Server) showSnapshot(w http.ResponseWriter, r *http.Request) {
 
 	if qb.timestamp > 0 {
 		thumb = s.store.GetThumbByTimestamp(qb.streamName, qb.timestamp)
+		maxAge = 3600
 	} else {
 		thumb = s.store.GetThumb(qb.streamName)
+		maxAge = 4
 	}
+	w.Header().Add("Cache-Control", fmt.Sprintf("max-age=%d", maxAge))
 	w.Header().Add("Content-Length", strconv.Itoa(len(thumb)))
 	w.Header().Add("Content-Type", "image/jpeg")
+	w.Header().Add("Expires", time.Now().Add(time.Second*time.Duration(maxAge)).Format(http.TimeFormat))
 	fmt.Fprint(w, thumb)
 }
 
