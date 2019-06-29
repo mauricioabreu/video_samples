@@ -166,6 +166,11 @@ func (c Collector) CollectThumbs(streams []Stream) {
 					continue
 				}
 
+				if len(data) == 0 {
+					log.Infof("File %s is empty", event.Name)
+					continue
+				}
+
 				timestamp := pathInfo.ModTime().UTC().Unix()
 				stream, err := getStream(getStreamName(event.Name), streams)
 				if err != nil {
