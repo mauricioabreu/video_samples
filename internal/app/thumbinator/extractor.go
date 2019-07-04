@@ -70,6 +70,8 @@ func (h HTTPSource) get() ([]Stream, error) {
 	if err != nil {
 		return streams, err
 	}
+	defer response.Body.Close()
+
 	data, err := ioutil.ReadAll(response.Body)
 	if err != nil {
 		return streams, err
