@@ -8,20 +8,20 @@ ENV NGINX_TS_VERSION 0.1.1
 
 EXPOSE 8080
 
-RUN mkdir /src /config /logs /data
-RUN mkdir -p /var/media/hls
+RUN mkdir /src /config /logs /data && mkdir -p /var/media/hls
 
-RUN set -x && \
+RUN set -ex && \
   apt-get update && \
   apt-get upgrade -y && \
   apt-get clean && \
   apt-get install -y --no-install-recommends build-essential \
   wget software-properties-common && \
   apt-get install -y --no-install-recommends libpcre3-dev \
-  zlib1g-dev libssl-dev wget
+  zlib1g-dev libssl-dev wget && \
+  rm -rf /var/lib/apt/lists/*
 
 WORKDIR /src
-RUN set -x && \
+RUN set -ex && \
   wget http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz && \
   tar zxf nginx-${NGINX_VERSION}.tar.gz && \
   rm nginx-${NGINX_VERSION}.tar.gz && \
@@ -30,7 +30,7 @@ RUN set -x && \
   rm v${NGINX_TS_VERSION}.tar.gz
 
 WORKDIR /src/nginx-${NGINX_VERSION}
-RUN set -x && \
+RUN set -ex && \
   ./configure --with-http_ssl_module \
   --add-module=/src/nginx-ts-module-${NGINX_TS_VERSION} \
   --with-http_stub_status_module \
