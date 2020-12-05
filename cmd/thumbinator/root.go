@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	_ "github.com/mauricioabreu/thumbinator/logger"
 	"github.com/spf13/cobra"
 )
 

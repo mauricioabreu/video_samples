@@ -1,0 +1,8 @@
+logs/
+.git
+/thumbnails
+
+# for binarys
+*.exe
+*.exe~
+thumbinator
