@@ -20,7 +20,7 @@ edge:
 	go run main.go server
 
 build:
-	go build -o thumbinator
+	go build -o video_samples
 
 install:
 	go install

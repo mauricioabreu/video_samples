@@ -1,4 +1,4 @@
-package thumbinator
+package video_samples
 
 import (
 	"net/http"

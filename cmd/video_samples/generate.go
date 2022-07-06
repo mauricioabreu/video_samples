@@ -4,7 +4,7 @@ import (
 	"os"
 
 	"github.com/fsnotify/fsnotify"
-	"github.com/mauricioabreu/thumbinator/internal/app/thumbinator"
+	"github.com/mauricioabreu/video_samples/internal/app/video_samples"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -20,7 +20,7 @@ var generateCmd = &cobra.Command{
 	},
 }
 
-// Run thumbinator, run
+// Run video_samples, run
 func Run() {
 	if err := generateCmd.Execute(); err != nil {
 		log.Fatal(err)
@@ -28,22 +28,22 @@ func Run() {
 	}
 }
 
-// Main run thumbinator, run
+// Main run video_samples, run
 func Main() {
-	streams, err := thumbinator.GetStreams(thumbinator.JSONSource{File: streamsFile})
+	streams, err := video_samples.GetStreams(video_samples.JSONSource{File: streamsFile})
 	if err != nil {
 		log.Fatalf("Could not retrieve streams to process: %s", err)
 	}
 	log.Infof("Retrieved the following streams: %+v", streams)
 	for _, s := range streams {
 		log.Debugf("Generating thumbs for %s with URL %s", s.Name, s.URL)
-		thumbinator.GenerateThumb(s.URL, s.Name, thumbsPath)
+		video_samples.GenerateThumb(s.URL, s.Name, thumbsPath)
 	}
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
 		log.Error(err)
 	}
-	collector := thumbinator.Collector{Watcher: watcher, Store: thumbinator.NewRedisStore(), Path: thumbsPath}
+	collector := video_samples.Collector{Watcher: watcher, Store: video_samples.NewRedisStore(), Path: thumbsPath}
 	collector.CollectThumbs(streams)
 }
 

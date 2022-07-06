@@ -1,14 +1,14 @@
-# thumbinator
+# video samples
 
 <p align="center">
-  <img src="https://github.com/mauricioabreu/thumbinator/raw/master/docs/thumbinator.png?raw=true" width="500">
-  <p align="center">Generate thumbs from live streamings and videos on demand</p>
+  <img src="https://github.com/mauricioabreu/video_samples/raw/master/docs/video_samples.png?raw=true" width="500">
+  <p align="center">Generate video samples from live streamings and videos on demand</p>
   <p align="center">
-    <a href="https://travis-ci.org/mauricioabreu/thumbinator">
-      <img src="https://travis-ci.org/mauricioabreu/thumbinator.svg?branch=master">
+    <a href="https://travis-ci.org/mauricioabreu/video_samples">
+      <img src="https://travis-ci.org/mauricioabreu/video_samples.svg?branch=master">
     </a>
-    <a href="https://codecov.io/gh/mauricioabreu/thumbinator">
-      <img src="https://codecov.io/gh/mauricioabreu/thumbinator/branch/master/graph/badge.svg">
+    <a href="https://codecov.io/gh/mauricioabreu/video_samples">
+      <img src="https://codecov.io/gh/mauricioabreu/video_samples/branch/master/graph/badge.svg">
     </a>
   </p>
 </p>
@@ -20,11 +20,11 @@
 
 ## Installing
 
-Currently we only support installing `thumbinator` from source:
+Currently we only support installing `video_samples` from source:
 
 ```console
-git clone git@github.com:mauricioabreu/thumbinator.git
-cd thumbinator
+git clone git@github.com:mauricioabreu/video_samples.git
+cd video_samples
 make install
 ```
 
@@ -53,17 +53,17 @@ make ingest
 
 ## Extracting thumbs
 
-Regardless of having local or online live streamings, we use `thumbinator` to generate thumbs.
+Regardless of having local or online live streamings, we use `video_samples` to generate thumbs.
 We have a `streams.json` file that serves as example to determine which URLs will be consumed to produce our thumbs.
 
-`thumbinator` comes with two entrypoints: `generate` and `server`
+`video_samples` comes with two entrypoints: `generate` and `server`
 
 ### Generate
 
 Start a program to extract, collect and save thumbs on `redis`:
 
 ```console
-thumbinator generate
+video_samples generate
 ```
 
 ### Server
@@ -71,13 +71,13 @@ thumbinator generate
 Start an HTTP server to query the saved thumbs for the given stream:
 
 ```console
-thumbinator server
+video_samples server
 ```
 
 For both commands you can get help:
 
 ```console
-thumbinator help <command>
+video_samples help <command>
 ```
 
 ## Commands
@@ -87,8 +87,8 @@ thumbinator help <command>
 * `make server` - Run nginx server with nginx-ts module (responsible to produce HLS and DASH chunks)
 * `make ingest` - Ingest a video to be handle by nginx-ts (big buck bunny strikes again)
 * `make redis` - Run a redis instance to save all the generated thumbs
-* `make run` - Run the thumbinator program
+* `make run` - Run the video_samples program
 * `make test` - Run test suite
 * `make edge` - Run an HTTP server to delivery our nice thumbnails
-* `make build` - Compile thumbinator package
-* `make install` - Compile and install thumbinator package
+* `make build` - Compile video_samples package
+* `make install` - Compile and install video_samples package

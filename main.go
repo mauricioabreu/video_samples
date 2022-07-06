@@ -1,7 +1,7 @@
 package main
 
 import (
-	cmd "github.com/mauricioabreu/thumbinator/cmd/thumbinator"
+	cmd "github.com/mauricioabreu/video_samples/cmd/video_samples"
 )
 
 func main() {

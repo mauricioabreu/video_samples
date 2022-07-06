@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"os"
 
-	_ "github.com/mauricioabreu/thumbinator/logger"
+	_ "github.com/mauricioabreu/video_samples/logger"
 	"github.com/spf13/cobra"
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "thumbinator",
+	Use:   "video_samples",
 	Short: "Generate thumbs from live streamings and videos on demand",
 }
 
