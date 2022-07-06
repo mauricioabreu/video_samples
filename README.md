@@ -1,7 +1,6 @@
 # video samples
 
 <p align="center">
-  <img src="https://github.com/mauricioabreu/video_samples/raw/master/docs/video_samples.png?raw=true" width="500">
   <p align="center">Generate video samples from live streamings and videos on demand</p>
   <p align="center">
     <a href="https://travis-ci.org/mauricioabreu/video_samples">
