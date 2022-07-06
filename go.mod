@@ -19,4 +19,5 @@ require (
 	github.com/spf13/pflag v1.0.3 // indirect
 	golang.org/x/net v0.0.0-20220706163947-c90051bbdb60 // indirect
 	golang.org/x/sys v0.0.0-20220704084225-05e143d24a9e // indirect
+	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
