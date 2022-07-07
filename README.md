@@ -4,10 +4,10 @@
   <p align="center">Generate video samples from live streamings and videos on demand</p>
   <p align="center">
     <a href="https://travis-ci.org/mauricioabreu/video_samples">
-      <img src="https://travis-ci.org/mauricioabreu/video_samples.svg?branch=master">
+      <img src="https://travis-ci.org/mauricioabreu/video_samples.svg?branch=main">
     </a>
     <a href="https://codecov.io/gh/mauricioabreu/video_samples">
-      <img src="https://codecov.io/gh/mauricioabreu/video_samples/branch/master/graph/badge.svg">
+      <img src="https://codecov.io/gh/mauricioabreu/video_samples/branch/main/graph/badge.svg">
     </a>
   </p>
 </p>
