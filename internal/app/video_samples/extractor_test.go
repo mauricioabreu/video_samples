@@ -12,7 +12,7 @@ import (
 func TestCollectThumbs(t *testing.T) {
 	streams := []Stream{
 		Stream{
-			Name: "big_buck_bunny",
+			Name: "colors",
 			URL:  "http://127.0.0.1:8080/play/hls/bunny/index.m3u8",
 			TTL:  5,
 		},
@@ -33,7 +33,7 @@ func TestCollectThumbs(t *testing.T) {
 	}()
 	time.Sleep(50 * time.Millisecond)
 	// Create a file system event so the collector wakes up
-	thumbFile, _ := filepath.Abs("../../../test/testdata/thumbnails/big_buck_bunny/000000002.jpg")
+	thumbFile, _ := filepath.Abs("../../../test/testdata/thumbnails/colors/000000002.jpg")
 	file, err := os.OpenFile(thumbFile, os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
 		t.Fatal(err)
@@ -45,7 +45,7 @@ func TestCollectThumbs(t *testing.T) {
 
 	collector.Watcher.Close()
 	os.Remove(thumbFile)
-	if string(ds.data["big_buck_bunny"]) != "foobar" {
-		t.Errorf("Wrong thumb blob saved. Got %v wanted %v", string(ds.data["big_buck_bunny"]), "foobar")
+	if string(ds.data["colors"]) != "foobar" {
+		t.Errorf("Wrong thumb blob saved. Got %v wanted %v", string(ds.data["colors"]), "foobar")
 	}
 }

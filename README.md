@@ -11,7 +11,7 @@
 
 ## Project goals
 
-* Generate thumbs for live streaming videos
+* Generate video samples for live streaming videos
 * Easy to deploy and run
 
 ## Installing
@@ -33,19 +33,20 @@ This project comes with tools to try it locally, without having a real live stre
 To achieve it we use some open source technologies like `ffmpeg` and `nginx-ts`.
 
 First, we need to start a `nginx` server to produce our streaming playlists:
+
 ```
 make server
 ```
 
 **p.s**: first run will take some time because it will compile and generate an image with `nginx-ts`.
 
-Now that we have a streaming server we can `ingest` a video. You can use the well known [Big Buck Bunny](https://peach.blender.org/download/)
+Now that we have a streaming server we can `ingest` a video. You can run the below command to make a video with color bars
 
 ```
 make ingest
 ```
 
-[VLC](https://www.videolan.org/vlc/) can be used to test if our streaming works.
+[VLC](https://www.videolan.org/vlc/) can be used to test if our streaming works using the following URL: http://127.0.0.1:8080/play/hls/colors/index.m3u8
 
 ## Extracting thumbs
 
