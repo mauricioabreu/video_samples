@@ -11,7 +11,7 @@ import (
 
 func TestCollectThumbs(t *testing.T) {
 	streams := []Stream{
-		Stream{
+		{
 			Name: "colors",
 			URL:  "http://127.0.0.1:8080/play/hls/bunny/index.m3u8",
 			TTL:  5,
