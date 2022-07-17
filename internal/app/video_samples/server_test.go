@@ -65,7 +65,7 @@ func TestRetrieveSnapshotByTimestamp(t *testing.T) {
 	}
 
 	if body := rr.Body; body.String() != "thumb_blob_by_timestamp_here" {
-		t.Errorf("Returnted wrong body: got %v wanted %v", body.String(), "thumb_blob_by_timestamp_here")
+		t.Errorf("Returned wrong body: got %v wanted %v", body.String(), "thumb_blob_by_timestamp_here")
 	}
 
 	if headers := rr.Header(); headers.Get("Content-Type") != "image/jpeg" {
