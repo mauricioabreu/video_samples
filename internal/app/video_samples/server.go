@@ -35,6 +35,7 @@ func parseQuery(u *url.URL) queryBy {
 
 func (s Server) showSnapshot(w http.ResponseWriter, r *http.Request) {
 	var thumb string
+	var err error
 	var maxAge int
 	qb := parseQuery(r.URL)
 	if qb.streamName == "" {
@@ -43,12 +44,19 @@ func (s Server) showSnapshot(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if qb.timestamp > 0 {
-		thumb = s.store.GetThumbByTimestamp(qb.streamName, qb.timestamp)
+		thumb, err = s.store.GetThumbByTimestamp(qb.streamName, qb.timestamp)
 		maxAge = 3600
 	} else {
-		thumb = s.store.GetThumb(qb.streamName)
+		thumb, err = s.store.GetThumb(qb.streamName)
 		maxAge = 4
 	}
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "")
+		return
+	}
+
 	w.Header().Add("Cache-Control", fmt.Sprintf("max-age=%d", maxAge))
 	w.Header().Add("Content-Length", strconv.Itoa(len(thumb)))
 	w.Header().Add("Content-Type", "image/jpeg")

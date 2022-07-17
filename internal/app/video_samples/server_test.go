@@ -10,12 +10,12 @@ type dummyStore struct {
 	data map[string][]byte
 }
 
-func (ds dummyStore) GetThumb(streamName string) string {
-	return "thumb_blob_here"
+func (ds dummyStore) GetThumb(streamName string) (string, error) {
+	return "thumb_blob_here", nil
 }
 
-func (ds dummyStore) GetThumbByTimestamp(streamName string, timestamp int64) string {
-	return "thumb_blob_by_timestamp_here"
+func (ds dummyStore) GetThumbByTimestamp(streamName string, timestamp int64) (string, error) {
+	return "thumb_blob_by_timestamp_here", nil
 }
 
 func (ds dummyStore) SaveThumb(stream Stream, timestamp int64, blob []byte) error {

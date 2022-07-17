@@ -22,8 +22,8 @@ func newClient() *redis.Client {
 }
 
 type store interface {
-	GetThumb(streamName string) string
-	GetThumbByTimestamp(streamName string, timestamp int64) string
+	GetThumb(streamName string) (string, error)
+	GetThumbByTimestamp(streamName string, timestamp int64) (string, error)
 	SaveThumb(stream Stream, timestamp int64, blob []byte) error
 }
 
@@ -35,19 +35,21 @@ func NewRedisStore() redisStore {
 	return redisStore{client: newClient()}
 }
 
-func (rs redisStore) GetThumb(streamName string) string {
+func (rs redisStore) GetThumb(streamName string) (string, error) {
 	keys, err := rs.client.ZRevRange("thumbs/"+streamName, 0, 0).Result()
 	if err != nil {
-		log.Fatal(err)
+		log.Error(err)
+		return "", err
 	}
 	thumb, err := rs.client.Get("thumbs/blob/" + keys[0]).Result()
 	if err != nil {
 		log.Fatal(err)
+		return "", err
 	}
-	return thumb
+	return thumb, nil
 }
 
-func (rs redisStore) GetThumbByTimestamp(streamName string, timestamp int64) string {
+func (rs redisStore) GetThumbByTimestamp(streamName string, timestamp int64) (string, error) {
 	keys, err := rs.client.ZRangeByScore("thumbs/"+streamName, redis.ZRangeBy{
 		Min:    strconv.FormatInt(timestamp, 10),
 		Max:    "+inf",
@@ -55,14 +57,16 @@ func (rs redisStore) GetThumbByTimestamp(streamName string, timestamp int64) str
 		Count:  1,
 	}).Result()
 	if err != nil {
-		log.Fatal(err)
+		log.Error(err)
+		return "", err
 	}
 
 	thumb, err := rs.client.Get("thumbs/blob/" + keys[0]).Result()
 	if err != nil {
-		log.Fatal(err)
+		log.Error(err)
+		return "", err
 	}
-	return thumb
+	return thumb, nil
 }
 
 func (rs redisStore) SaveThumb(stream Stream, timestamp int64, blob []byte) error {
