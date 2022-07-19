@@ -1,0 +1,44 @@
+services:
+  samples_generator:
+    build: .
+    volumes:
+      - ./:/app
+    command: ["go", "run", "main.go", "generate"]
+    depends_on:
+      - store
+      - video
+    env_file:
+      - .env
+
+  samples_server:
+    build: .
+    volumes:
+      - ./:/app
+    ports:
+      - "8181:8181"
+    command: ["go", "run", "main.go", "server"]
+    depends_on:
+      - store
+      - video
+    env_file:
+      - .env
+
+  store:
+    image: redis
+    ports:
+      - "6379:6379"
+
+  video:
+    build: ./video
+    ports:
+      - "8080:8080"
+
+  ingest:
+    image: alfg/ffmpeg
+    platform: linux/amd64
+    volumes:
+      - ./video/ingest.sh:/app/ingest.sh
+      - ./video/fonts:/app/fonts
+    command: ["./app/ingest.sh"]
+    depends_on:
+      - video

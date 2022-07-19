@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/mauricioabreu/video_samples/config"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -66,7 +67,8 @@ func (s Server) showSnapshot(w http.ResponseWriter, r *http.Request) {
 
 // Serve start HTTP server to show thumbs
 func Serve() {
-	server := Server{store: NewRedisStore()}
+	config := config.GetConfig()
+	server := Server{store: NewRedisStore(config)}
 	http.HandleFunc("/", server.showSnapshot)
 	log.Fatal(http.ListenAndServe(":8181", nil))
 }

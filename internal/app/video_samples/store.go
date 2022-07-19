@@ -7,14 +7,15 @@ import (
 
 	"github.com/go-redis/redis"
 	"github.com/gofrs/uuid"
+	"github.com/mauricioabreu/video_samples/config"
 	log "github.com/sirupsen/logrus"
 )
 
-func newClient() *redis.Client {
+func newClient(c *config.Config) *redis.Client {
 	client := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
-		Password: "",
-		DB:       0,
+		Addr:     c.RedisAddress,
+		Password: c.RedisPassword,
+		DB:       c.RedisDB,
 	})
 	pong, err := client.Ping().Result()
 	log.Info(pong, err)
@@ -31,8 +32,8 @@ type redisStore struct {
 	client *redis.Client
 }
 
-func NewRedisStore() redisStore {
-	return redisStore{client: newClient()}
+func NewRedisStore(c *config.Config) redisStore {
+	return redisStore{client: newClient(c)}
 }
 
 func (rs redisStore) GetThumb(streamName string) (string, error) {

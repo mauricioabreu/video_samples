@@ -2,7 +2,6 @@ logs/
 .git
 /thumbnails
 
-# for binarys
 *.exe
 *.exe~
 video_samples

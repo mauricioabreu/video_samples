@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/fsnotify/fsnotify"
+	"github.com/mauricioabreu/video_samples/config"
 	"github.com/mauricioabreu/video_samples/internal/app/video_samples"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -30,6 +31,7 @@ func Run() {
 
 // Main run video_samples, run
 func Main() {
+	c := config.GetConfig()
 	streams, err := video_samples.GetStreams(video_samples.JSONSource{File: streamsFile})
 	if err != nil {
 		log.Fatalf("Could not retrieve streams to process: %s", err)
@@ -43,7 +45,7 @@ func Main() {
 	if err != nil {
 		log.Error(err)
 	}
-	collector := video_samples.Collector{Watcher: watcher, Store: video_samples.NewRedisStore(), Path: thumbsPath}
+	collector := video_samples.Collector{Watcher: watcher, Store: video_samples.NewRedisStore(c), Path: thumbsPath}
 	collector.CollectThumbs(streams)
 }
 

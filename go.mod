@@ -6,6 +6,7 @@ require (
 	github.com/fsnotify/fsnotify v1.4.7
 	github.com/go-redis/redis v6.15.2+incompatible
 	github.com/gofrs/uuid v3.2.0+incompatible
+	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/sirupsen/logrus v1.4.2
 	github.com/spf13/cobra v0.0.5
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
