@@ -8,7 +8,7 @@ import (
 var serverCmd = &cobra.Command{
 	Use:   "server",
 	Short: "Run HTTP server to retrieve your thumbs",
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(_ *cobra.Command, _ []string) {
 		video_samples.Serve()
 	},
 }

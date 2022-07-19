@@ -16,7 +16,7 @@ var streamsFile string
 var generateCmd = &cobra.Command{
 	Use:   "generate",
 	Short: "Generate thumbs from live streamings and videos on demand",
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(_ *cobra.Command, _ []string) {
 		Main()
 	},
 }
