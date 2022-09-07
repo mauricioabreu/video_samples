@@ -29,16 +29,9 @@ services:
       - "6379:6379"
 
   video:
-    build: ./video
+    build:
+      context: ./video
+    volumes:
+      - "./video/OpenSans-Bold.ttf:/video/OpenSans-Bold.ttf"
     ports:
       - "8080:8080"
-
-  ingest:
-    image: alfg/ffmpeg
-    platform: linux/amd64
-    volumes:
-      - ./video/ingest.sh:/app/ingest.sh
-      - ./video/fonts:/app/fonts
-    command: ["./app/ingest.sh"]
-    depends_on:
-      - video
