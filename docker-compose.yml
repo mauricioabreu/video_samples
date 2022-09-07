@@ -1,5 +1,5 @@
 services:
-  samples_generator:
+  generator:
     build: .
     volumes:
       - ./:/app
@@ -10,7 +10,7 @@ services:
     env_file:
       - .env
 
-  samples_server:
+  server:
     build: .
     volumes:
       - ./:/app
