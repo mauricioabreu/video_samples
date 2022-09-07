@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -x
+
 python3 -m http.server 8080 &
 
 ffmpeg -hide_banner \
