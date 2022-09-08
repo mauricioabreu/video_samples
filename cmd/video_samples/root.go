@@ -1,10 +1,7 @@
 package cmd
 
 import (
-	"fmt"
-	"os"
-
-	_ "github.com/mauricioabreu/video_samples/logger"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
 
@@ -16,7 +13,6 @@ var rootCmd = &cobra.Command{
 // Execute adds child commands to the root commander
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		log.Fatal().Err(err).Msg("")
 	}
 }

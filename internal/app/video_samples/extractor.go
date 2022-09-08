@@ -14,7 +14,7 @@ import (
 	"time"
 
 	"github.com/fsnotify/fsnotify"
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 )
 
 const (
@@ -123,16 +123,16 @@ func getSubDirs(sourcePath string) []string {
 func (c Collector) CollectThumbs(streams []Stream) {
 	go func() {
 		for err := range c.Watcher.Errors {
-			log.Error(err)
+			log.Error().Err(err).Msg("")
 		}
 	}()
 
 	if err := c.Watcher.Add(c.Path); err != nil {
-		log.Fatal(err)
+		log.Fatal().Err(err).Msg("")
 	}
 	for _, d := range getSubDirs(c.Path) {
 		if err := c.Watcher.Add(d); err != nil {
-			log.Fatal(err)
+			log.Fatal().Err(err).Msg("")
 		}
 	}
 
@@ -140,22 +140,22 @@ func (c Collector) CollectThumbs(streams []Stream) {
 	go func() {
 		for event := range c.Watcher.Events {
 			if event.Op&fsnotify.Create == fsnotify.Create {
-				log.Debugf("Received event: %s", event.Name)
+				log.Debug().Msgf("Received event: %s", event.Name)
 				seq, err := getSeqNumber(event.Name)
 				if err != nil {
-					log.Error(err)
+					log.Error().Err(err).Msg("")
 					continue
 				}
 				if seq%sampleRate != 0 {
 					if err := os.Remove(event.Name); err != nil {
-						log.Debugf("Could not remove thumb file %s: %s", event.Name, err)
+						log.Debug().Msgf("Could not remove thumb file %s", event.Name)
 					}
 					continue
 				}
 
 				pathInfo, err := os.Stat(event.Name)
 				if err != nil {
-					log.Fatalf("Could not read path metadata for %s: %s", event.Name, err)
+					log.Fatal().Err(err).Msgf("Could not read path metadata for %s", event.Name)
 				}
 				if pathInfo.IsDir() {
 					c.Watcher.Add(event.Name)
@@ -164,27 +164,27 @@ func (c Collector) CollectThumbs(streams []Stream) {
 
 				data, err := ioutil.ReadFile(event.Name)
 				if err != nil {
-					log.Errorf("Could not read file: %s", err)
+					log.Error().Err(err).Msg("Could not read file")
 					continue
 				}
 
 				if len(data) == 0 {
-					log.Infof("File %s is empty", event.Name)
+					log.Info().Msgf("File %s is empty", event.Name)
 					continue
 				}
 
 				timestamp := pathInfo.ModTime().UTC().Unix()
 				stream, err := getStream(getStreamName(event.Name), streams)
 				if err != nil {
-					log.Error(err)
+					log.Error().Err(err).Msg("")
 				}
 				if err := c.Store.SaveThumb(stream, timestamp, data); err != nil {
-					log.Debugf("Could not save thumbs for %s: %s", stream.Name, err)
+					log.Debug().Msgf("Could not save thumbs for %s", stream.Name)
 					continue
 				}
-				log.Debugf("Saved thumb for %s", stream.Name)
+				log.Debug().Msgf("Saved thumb for %s", stream.Name)
 				if err := os.Remove(event.Name); err != nil {
-					log.Debugf("Could not remove thumb file %s: %s", event.Name, err)
+					log.Debug().Msgf("Could not remove thumb file %s", event.Name)
 				}
 			}
 		}
@@ -192,7 +192,7 @@ func (c Collector) CollectThumbs(streams []Stream) {
 	}()
 
 	<-done
-	log.Info("Done watching files...")
+	log.Info().Msg("Done watching files...")
 }
 
 func getSeqNumber(filename string) (int, error) {

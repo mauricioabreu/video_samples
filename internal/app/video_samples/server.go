@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/mauricioabreu/video_samples/config"
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 )
 
 // Server HTTP handler
@@ -67,8 +67,14 @@ func (s Server) showSnapshot(w http.ResponseWriter, r *http.Request) {
 
 // Serve start HTTP server to show thumbs
 func Serve() {
-	config := config.GetConfig()
-	server := Server{store: NewRedisStore(config)}
+	c := config.GetConfig()
+	redis, err := NewRedisStore(c)
+	if err != nil {
+		log.Fatal().Err(err).Msg("")
+	}
+	server := Server{store: redis}
 	http.HandleFunc("/", server.showSnapshot)
-	log.Fatal(http.ListenAndServe(":8181", nil))
+	if err := http.ListenAndServe(":8181", nil); err != nil {
+		log.Fatal().Err(err).Msg("Failed to start server")
+	}
 }

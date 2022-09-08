@@ -8,19 +8,8 @@ import (
 	"github.com/go-redis/redis"
 	"github.com/gofrs/uuid"
 	"github.com/mauricioabreu/video_samples/config"
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 )
-
-func newClient(c *config.Config) *redis.Client {
-	client := redis.NewClient(&redis.Options{
-		Addr:     c.RedisAddress,
-		Password: c.RedisPassword,
-		DB:       c.RedisDB,
-	})
-	pong, err := client.Ping().Result()
-	log.Info(pong, err)
-	return client
-}
 
 type store interface {
 	GetThumb(streamName string) (string, error)
@@ -32,19 +21,28 @@ type redisStore struct {
 	client *redis.Client
 }
 
-func NewRedisStore(c *config.Config) redisStore {
-	return redisStore{client: newClient(c)}
+func NewRedisStore(c *config.Config) (redisStore, error) {
+	client := redis.NewClient(&redis.Options{
+		Addr:     c.RedisAddress,
+		Password: c.RedisPassword,
+		DB:       c.RedisDB,
+	})
+	_, err := client.Ping().Result()
+	if err != nil {
+		return redisStore{}, err
+	}
+	return redisStore{client: client}, nil
 }
 
 func (rs redisStore) GetThumb(streamName string) (string, error) {
 	keys, err := rs.client.ZRevRange("thumbs/"+streamName, 0, 0).Result()
 	if err != nil {
-		log.Error(err)
+		log.Error().Err(err).Msg("")
 		return "", err
 	}
 	thumb, err := rs.client.Get("thumbs/blob/" + keys[0]).Result()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal().Err(err).Msg("")
 		return "", err
 	}
 	return thumb, nil
@@ -58,13 +56,13 @@ func (rs redisStore) GetThumbByTimestamp(streamName string, timestamp int64) (st
 		Count:  1,
 	}).Result()
 	if err != nil {
-		log.Error(err)
+		log.Error().Err(err).Msg("")
 		return "", err
 	}
 
 	thumb, err := rs.client.Get("thumbs/blob/" + keys[0]).Result()
 	if err != nil {
-		log.Error(err)
+		log.Error().Err(err).Msg("")
 		return "", err
 	}
 	return thumb, nil

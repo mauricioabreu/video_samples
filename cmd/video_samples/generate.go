@@ -1,12 +1,10 @@
 package cmd
 
 import (
-	"os"
-
 	"github.com/fsnotify/fsnotify"
 	"github.com/mauricioabreu/video_samples/config"
 	"github.com/mauricioabreu/video_samples/internal/app/video_samples"
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
 
@@ -24,8 +22,7 @@ var generateCmd = &cobra.Command{
 // Run video_samples, run
 func Run() {
 	if err := generateCmd.Execute(); err != nil {
-		log.Fatal(err)
-		os.Exit(1)
+		log.Fatal().Err(err).Msg("")
 	}
 }
 
@@ -34,18 +31,24 @@ func Main() {
 	c := config.GetConfig()
 	streams, err := video_samples.GetStreams(video_samples.JSONSource{File: streamsFile})
 	if err != nil {
-		log.Fatalf("Could not retrieve streams to process: %s", err)
+		log.Fatal().Err(err).Msg("Could not retrieve streams to process")
 	}
-	log.Infof("Retrieved the following streams: %+v", streams)
+	log.Info().Msgf("Retrieved the following streams: %+v", streams)
 	for _, s := range streams {
-		log.Debugf("Generating thumbs for %s with URL %s", s.Name, s.URL)
+		log.Debug().Msgf("Generating thumbs for %s with URL %s", s.Name, s.URL)
 		video_samples.GenerateThumb(s.URL, s.Name, thumbsPath)
 	}
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
-		log.Error(err)
+		log.Error().Err(err).Msg("")
 	}
-	collector := video_samples.Collector{Watcher: watcher, Store: video_samples.NewRedisStore(c), Path: thumbsPath}
+
+	redis, err := video_samples.NewRedisStore(c)
+	if err != nil {
+		log.Fatal().Err(err).Msg("")
+	}
+
+	collector := video_samples.Collector{Watcher: watcher, Store: redis, Path: thumbsPath}
 	collector.CollectThumbs(streams)
 }
 
