@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"os/exec"
@@ -52,7 +52,7 @@ type HTTPSource struct {
 
 func (js JSONSource) get() ([]Stream, error) {
 	streams := make([]Stream, 0)
-	data, err := ioutil.ReadFile(js.File)
+	data, err := os.ReadFile(js.File)
 	if err != nil {
 		return streams, err
 	}
@@ -72,7 +72,7 @@ func (h HTTPSource) get() ([]Stream, error) {
 	}
 	defer response.Body.Close()
 
-	data, err := ioutil.ReadAll(response.Body)
+	data, err := io.ReadAll(response.Body)
 	if err != nil {
 		return streams, err
 	}
@@ -90,7 +90,9 @@ func GetStreams(s source) ([]Stream, error) {
 
 func createDir(path string) {
 	if _, err := os.Stat(path); os.IsNotExist(err) {
-		os.MkdirAll(path, 0755)
+		if err := os.MkdirAll(path, 0755); err != nil {
+			log.Error().Err(err).Msg("")
+		}
 	}
 }
 
@@ -107,7 +109,7 @@ func GenerateThumb(streamingURL string, streamName string, path string) {
 
 func getSubDirs(sourcePath string) []string {
 	var paths []string
-	filepath.Walk(sourcePath, func(path string, info os.FileInfo, err error) error {
+	err := filepath.Walk(sourcePath, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
@@ -116,6 +118,9 @@ func getSubDirs(sourcePath string) []string {
 		}
 		return nil
 	})
+	if err != nil {
+		return nil
+	}
 	return paths
 }
 
@@ -158,11 +163,13 @@ func (c Collector) CollectThumbs(streams []Stream) {
 					log.Fatal().Err(err).Msgf("Could not read path metadata for %s", event.Name)
 				}
 				if pathInfo.IsDir() {
-					c.Watcher.Add(event.Name)
+					if err := c.Watcher.Add(event.Name); err != nil {
+						log.Error().Err(err).Msg("")
+					}
 					continue
 				}
 
-				data, err := ioutil.ReadFile(event.Name)
+				data, err := os.ReadFile(event.Name)
 				if err != nil {
 					log.Error().Err(err).Msg("Could not read file")
 					continue

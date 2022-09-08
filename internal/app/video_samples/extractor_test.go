@@ -38,8 +38,14 @@ func TestCollectThumbs(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	file.WriteString("foobar")
-	file.Sync()
+	_, err = file.WriteString("foobar")
+	if err != nil {
+		t.Errorf("Error writing file")
+	}
+
+	if err := file.Sync(); err != nil {
+		t.Errorf("Error syncing file")
+	}
 	file.Close()
 	time.Sleep(50 * time.Millisecond)
 
