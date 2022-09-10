@@ -10,4 +10,8 @@ build:
 install:
 	go install
 
+clean:
+	rm video/*.m3u8
+	rm video/*.ts
+
 .PHONY: run test build install
