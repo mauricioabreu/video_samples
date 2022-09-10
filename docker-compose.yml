@@ -6,7 +6,6 @@ services:
     command: ["go", "run", "main.go", "generate"]
     depends_on:
       - store
-      - video
     env_file:
       - .env
 
@@ -19,7 +18,6 @@ services:
     command: ["go", "run", "main.go", "server"]
     depends_on:
       - store
-      - video
     env_file:
       - .env
 
