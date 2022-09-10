@@ -2,7 +2,7 @@
 
 set -x
 
-python3 -m http.server 8080 &
+python3 -m http.server 8080 --bind 0.0.0.0 &
 
 ffmpeg -hide_banner \
     -re -f lavfi -i "smptehdbars=size=1280x720:rate=30,format=yuv420p" \

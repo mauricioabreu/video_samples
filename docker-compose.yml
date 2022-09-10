@@ -31,6 +31,7 @@ services:
   video:
     build:
       context: ./video
+    entrypoint: ''
     volumes:
       - "./video/OpenSans-Bold.ttf:/video/OpenSans-Bold.ttf"
     ports:
