@@ -30,23 +30,9 @@ the binary distribution the way you want.
 ## Trying it out!
 
 This project comes with tools to try it locally, without having a real live streaming on the internet.
-To achieve it we use some open source technologies like `ffmpeg` and `nginx-ts`.
+To achieve it we use some open source technologies like `ffmpeg`, `golang` and `redis`
 
-First, we need to start a `nginx` server to produce our streaming playlists:
-
-```
-make server
-```
-
-**p.s**: first run will take some time because it will compile and generate an image with `nginx-ts`.
-
-Now that we have a streaming server we can `ingest` a video. You can run the below command to make a video with color bars
-
-```
-make ingest
-```
-
-[VLC](https://www.videolan.org/vlc/) can be used to test if our streaming works using the following URL: http://127.0.0.1:8080/play/hls/colors/index.m3u8
+First, we need to start a `ffmpeg` command with a server to produce our HLS playlists.
 
 ## Extracting thumbs
 
@@ -81,8 +67,6 @@ video_samples help <command>
 > Available make commands
 
 * `make build-server` - Build base image to run the live streaming server
-* `make server` - Run nginx server with nginx-ts module (responsible to produce HLS and DASH chunks)
-* `make ingest` - Ingest a video to be handle by nginx-ts (big buck bunny strikes again)
 * `make redis` - Run a redis instance to save all the generated thumbs
 * `make run` - Run the video_samples program
 * `make test` - Run test suite
