@@ -1,13 +1,6 @@
-# video samples
+# Video Samples
 
-<p align="center">
-  <p align="center">Generate video samples from live streamings and videos on demand</p>
-  <p align="center">
-    <a href="https://codecov.io/gh/mauricioabreu/video_samples">
-      <img src="https://codecov.io/gh/mauricioabreu/video_samples/branch/master/graph/badge.svg?token=b45pl4suZS">
-    </a>
-  </p>
-</p>
+Generate video samples from live streamings and videos on demand
 
 ## Project goals
 
@@ -27,7 +20,7 @@ make install
 `make build` can also be used if you don't want to add `GOBIN` to your global path and want to use
 the binary distribution the way you want.
 
-## Trying it out!
+## Trying it out
 
 This project comes with tools to try it locally, without having a real live streaming on the internet.
 To achieve it we use some open source technologies like `ffmpeg`, `golang` and `redis`
@@ -64,6 +57,7 @@ video_samples help <command>
 ```
 
 ## Commands
+
 > Available make commands
 
 * `make build-server` - Build base image to run the live streaming server
