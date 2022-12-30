@@ -1,9 +1,11 @@
 services:
   generator:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
     volumes:
       - ./:/app
-    command: ["go", "run", "main.go", "generate"]
+    entrypoint: ["video_samples", "generate", "--streamsFile", "/app/streams.json"]
     depends_on:
       - store
     env_file:

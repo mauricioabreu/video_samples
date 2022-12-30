@@ -7,6 +7,9 @@ test:
 build:
 	go build -o video_samples
 
+play:
+	docker compose up video
+
 install:
 	go install
 

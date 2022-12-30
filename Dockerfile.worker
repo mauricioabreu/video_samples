@@ -1,0 +1,10 @@
+FROM golang:1.18 as builder
+WORKDIR /app
+COPY go.mod ./
+COPY go.sum ./
+COPY . .
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o /video_samples
+
+FROM linuxserver/ffmpeg:latest
+COPY --from=builder /video_samples /usr/local/bin
+
