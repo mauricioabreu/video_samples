@@ -2,6 +2,17 @@
 
 This document describes the rationale behind the Video Samples project.
 
+```mermaid
+---
+title: Video Samples flowchart
+---
+graph LR
+    A[Extractor] --> |Extract resources| B(Filesystem)
+    C[Collector] --> |Collect resources| B
+    C --> |Store resources| D(Database)
+    E[API] --> |Query resources| D(Database)
+```
+
 ## What it is?
 
 Video Samples is a software used to extract resources from video.
