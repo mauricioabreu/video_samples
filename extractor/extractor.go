@@ -16,9 +16,9 @@ func ExtractThumbs(title string, opts ThumbOptions, runner func(Command) error) 
 		"-live_start_index", "-1",
 		"-f", "hls",
 		"-i", opts.Input,
-		"-vf", "fps=1,scale=-1:360",
+		"-vf", fmt.Sprintf("fps=1,scale=%s", opts.Scale),
 		"-vsync", "vfr",
-		"-q:v", "5",
+		"-q:v", fmt.Sprintf("%d", opts.Quality),
 		"-threads", "1",
 		fmt.Sprintf("%s/%s/%%09d.jpg", opts.Output, title),
 	}
