@@ -22,5 +22,5 @@ func ExtractThumbs(title string, opts ThumbOptions, runner func(Command) error) 
 		"-threads", "1",
 		fmt.Sprintf("%s/%s/%%09d.jpg", opts.Output, title),
 	}
-	return RunCmd(Command{executable: "ffmpeg", args: args})
+	return runner(Command{executable: "ffmpeg", args: args})
 }
