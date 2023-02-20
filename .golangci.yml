@@ -1,0 +1,24 @@
+run:
+  timeout: 2m
+  tests: false
+  skip-dirs:
+    - "(^|/)tests($|/)"
+  output:
+    format: colored-line-number
+    print-issued-lines: true
+    print-linter-name: true
+    uniq-by-line: true
+
+linters:
+  enable:
+    - depguard
+    - errorlint
+    - goconst
+    - goimports
+    - gosec
+    - unconvert
+    - wrapcheck
+    - gomnd
+    - lll
+    - goerr113
+    - bodyclose
