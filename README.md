@@ -11,3 +11,13 @@ Coming soon
 ## 💡 Usage
 
 Coming soon
+
+## Tests
+
+First, make sure you have the [ginkgo](http://onsi.github.io/ginkgo/) test runner installed.
+
+Then run the test suite:
+
+```
+ginkgo -p -v ./... 
+```
