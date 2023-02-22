@@ -13,3 +13,8 @@ coverage.txt
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+
+# Testing data
+testvideo/*.m3u8
+testvideo/*.ts
+testvideo/**/*.jpg

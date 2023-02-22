@@ -13,8 +13,8 @@ func Enqueue() {
 	defer client.Close()
 
 	task, err := NewExtractThumbsTask(extractor.ThumbOptions{
-		Input:   "http://localhost:8080/big_buck_bunny/playlist.m3u8",
-		Output:  "/tmp/thumbs/big_buck_bunny",
+		Input:   "http://localhost:8080/output.m3u8",
+		Output:  "testvideo/thumbs/",
 		Scale:   "-1:360",
 		Quality: 5,
 	})

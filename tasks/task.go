@@ -28,7 +28,7 @@ func HandleThumbsExtractTask(ctx context.Context, t *asynq.Task) error {
 		return fmt.Errorf("failed to process payload: %w %w", err, asynq.SkipRetry)
 	}
 	log.Info().Msgf("Extracting thumbs from video URL: %s", opts.Input)
-	if err := extractor.ExtractThumbs("big_buck_bunny", opts, extractor.RunCmd); err != nil {
+	if err := extractor.ExtractThumbs("colors", opts, extractor.RunCmd); err != nil {
 		return fmt.Errorf("failed to run the extractor: %w %w", err, asynq.SkipRetry)
 	}
 	return nil
