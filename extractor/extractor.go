@@ -13,6 +13,8 @@ type ThumbOptions struct {
 
 func ExtractThumbs(title string, opts ThumbOptions, runner func(Command) error) error {
 	args := []string{
+		"-hide_banner",
+		"-loglevel", "warning",
 		"-live_start_index", "-1",
 		"-f", "hls",
 		"-i", opts.Input,

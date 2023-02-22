@@ -15,8 +15,10 @@ func RunCmd(c Command) error {
 	if err := cmd.Start(); err != nil {
 		return fmt.Errorf("failed to start cmd: %w", err)
 	}
-	if err := cmd.Wait(); err != nil {
+
+	if err := cmd.Start(); err != nil {
 		return fmt.Errorf("failed to wait cmd: %w", err)
 	}
-	return nil
+
+	return cmd.Wait()
 }
