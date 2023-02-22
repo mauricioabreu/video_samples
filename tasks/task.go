@@ -25,8 +25,11 @@ func NewExtractThumbsTask(to extractor.ThumbOptions) (*asynq.Task, error) {
 func HandleThumbsExtractTask(ctx context.Context, t *asynq.Task) error {
 	var opts extractor.ThumbOptions
 	if err := json.Unmarshal(t.Payload(), &opts); err != nil {
-		return fmt.Errorf("failed to process HandleThumbsExtractTask: %w %w", err, asynq.SkipRetry)
+		return fmt.Errorf("failed to process payload: %w %w", err, asynq.SkipRetry)
 	}
 	log.Info().Msgf("Extracting thumbs from video URL: %s", opts.Input)
-	return extractor.ExtractThumbs("big_buck_bunny", opts, extractor.RunCmd)
+	if err := extractor.ExtractThumbs("big_buck_bunny", opts, extractor.RunCmd); err != nil {
+		return fmt.Errorf("failed to run the extractor: %w %w", err, asynq.SkipRetry)
+	}
+	return nil
 }
