@@ -9,3 +9,6 @@ create-video:
 clean-video:
 	rm -f testvideo/*.m3u8
 	rm -f testvideo/*.ts
+
+serve-video:
+	python3 -m http.server -d testvideo 8080
