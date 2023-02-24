@@ -17,6 +17,7 @@ func NewRootCmd() *cobra.Command {
 
 	rootCmd.AddCommand(EnqueueCmd())
 	rootCmd.AddCommand(Work())
+	rootCmd.AddCommand(Collect())
 
 	return rootCmd
 }

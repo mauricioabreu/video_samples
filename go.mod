@@ -6,6 +6,7 @@ require (
 	github.com/hibiken/asynq v0.24.0
 	github.com/onsi/ginkgo/v2 v2.8.3
 	github.com/onsi/gomega v1.27.1
+	github.com/rjeczalik/notify v0.9.3
 	github.com/rs/zerolog v1.29.0
 	github.com/spf13/cobra v1.6.1
 )
