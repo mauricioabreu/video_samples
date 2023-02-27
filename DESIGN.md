@@ -36,4 +36,4 @@ We don't want multiples ffmpeg processes running for the same feature and video.
 A collector is responsible for collecting the files generated from ffmpeg. When writing the file to disk,
 ffmpeg writes the content to the file and then closes it. For event monitors like _inotify_, it is the `CLOSE_WRITE` event.
 
-A monitor can be started to watch events of a given path and stores it everywhere a file is created.
+A monitor can be started to watch events of a given path and stores it everytime a new file shows up.
