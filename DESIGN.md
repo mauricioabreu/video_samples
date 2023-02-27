@@ -29,6 +29,8 @@ An extractor is responsible for generating assets from video and save it in the 
 
 Extracting resources from video can be done in a multiple ways when using a programming language, but for this project we choose to rely on OS processes. We can build a ffmpeg command line, run it in background and maintain a list of video titles being processed. Extracting thumbnails from live video, for example, is a long running process - we need to apply some kind of healthcheck mechanism to ensure the resources are being extracted.
 
+We don't want multiples ffmpeg processes running for the same feature and video. To avoid this behavior, we generate a unique ID composed by the video name and the feature.
+
 ### Collector
 
 A collector is responsible for collecting the files generated from ffmpeg. When writing the file to disk,
