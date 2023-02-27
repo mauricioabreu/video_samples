@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/mauricioabreu/video_samples/collector"
 	"github.com/mauricioabreu/video_samples/extractor/inventory"
 	"github.com/mauricioabreu/video_samples/tasks"
 	"github.com/spf13/cobra"
@@ -17,6 +18,7 @@ func EnqueueCmd() *cobra.Command {
 				}
 			}
 			tasks.Enqueue(getStreams("http://localhost:8080/output.m3u8"))
+			collector.Collect("testvideo/thumbs/colors")
 		},
 	}
 }
