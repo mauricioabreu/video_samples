@@ -1,6 +1,7 @@
 package tasks
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/hibiken/asynq"
@@ -39,11 +40,15 @@ func enqueueTasks(getStreamings func() ([]inventory.Streaming, error), client *a
 			log.Error().Err(err).Msgf("Could not create task: %v", err)
 			return
 		}
-		info, err := client.Enqueue(task)
+		info, err := client.Enqueue(task, asynq.TaskID(generateID("thumb", stream.Name)))
 		if err != nil {
 			log.Error().Err(err).Msgf("Could not enqueue task: %v", err)
 			return
 		}
 		log.Info().Msgf("Enqueued task: id=%s queue=%s", info.ID, info.Queue)
 	}
+}
+
+func generateID(feature, name string) string {
+	return fmt.Sprintf("%s_%s", feature, name)
 }
