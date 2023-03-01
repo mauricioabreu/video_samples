@@ -37,3 +37,19 @@ A collector is responsible for collecting the files generated from ffmpeg. When 
 ffmpeg writes the content to the file and then closes it. For event monitors like _inotify_, it is the `CLOSE_WRITE` event.
 
 A monitor can be started to watch events of a given path and stores it everytime a new file shows up.
+
+*Thumbnails* for live videos don't need to be kept forever in a database because live videos have the DVR (digital video recording) concept. DVR allows user to rewind the broadcast, going back in time.
+
+The diagram below describes how we can store and query thumbnails:
+
+```mermaid
+---
+title: Store and query thumbnails
+---
+
+graph LR
+    collector([collector])-. Save thumbnail info <br/>into Redis .->redis[(Redis)]
+    redis --> success{Success?}
+    success -->|Yes| storage[(Storage)]
+    success -->|No| discard[Discard thumb]
+```
