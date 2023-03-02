@@ -53,3 +53,5 @@ graph LR
     success -->|Yes| storage[(Storage)]
     success -->|No| discard[Discard thumb]
 ```
+
+To save a thumbnail, we can use a [sorted set](https://redis.io/commands/zadd/) and set the score with the timestamp value of the moment the thumbnail was inserted.
