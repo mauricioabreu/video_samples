@@ -54,4 +54,14 @@ graph LR
     success -->|No| discard[Discard thumb]
 ```
 
-To save a thumbnail, we can use a [sorted set](https://redis.io/commands/zadd/) and set the score with the timestamp value of the moment the thumbnail was inserted.
+To save a thumbnail, we can add them to a [sorted set](https://redis.io/commands/zadd/) and set the score with the timestamp value of the moment the thumbnail was inserted.
+
+After collecting the thumbnail we can insert a member in Redis using unique identifier - we can use the very same identifier to upload the file in the storage.
+
+Since we are dealing with sorted sets, we can use `ZADD`. Suppose we have a live streaming named _bunny_:
+
+```
+ZADD thumbnails/bunny 1677779184 5fdbadc9-b300-4514-9171-0297caba44bb
+```
+
+A routine can be fired to remove keys older than the thumbnail TTL (score), using [this Redis operation](https://redis.io/commands/zremrangebyscore/)
