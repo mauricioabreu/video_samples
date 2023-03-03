@@ -16,13 +16,21 @@ func TestCollector(t *testing.T) {
 var _ = Describe("Collector", func() {
 	Describe("Match file extension", func() {
 		When("patterns list contains the extension", func() {
-			It("matches the extension", func() {
-				Expect(watcher.MatchExt("/thumbnails/bunny/0001.jpg", []string{"jpg", "jpeg", "png"})).To(BeTrue())
+			It("matches", func() {
+				patterns := []string{"jpg", "jpeg", "png"}
+				Expect(watcher.MatchExt("/thumbnails/bunny/0001.jpg", patterns)).To(BeTrue())
 			})
 		})
 		When("patterns list does not contain the extension", func() {
-			It("does not match the extension", func() {
-				Expect(watcher.MatchExt("/thumbnails/bunny/0001.jpg", []string{"png", "bmp"})).To(BeFalse())
+			It("does not match", func() {
+				patterns := []string{"png", "bmp"}
+				Expect(watcher.MatchExt("/thumbnails/bunny/0001.jpg", patterns)).To(BeFalse())
+			})
+		})
+		When("path does not have extension", func() {
+			It("does not match", func() {
+				patterns := []string{"jpg", "jpeg", "png"}
+				Expect(watcher.MatchExt("/thumbnails/bunny/0001", patterns)).To(BeFalse())
 			})
 		})
 	})
