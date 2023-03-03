@@ -5,7 +5,6 @@ import (
 	"path/filepath"
 
 	"github.com/rjeczalik/notify"
-	"github.com/rs/zerolog/log"
 	"github.com/samber/lo"
 )
 
@@ -28,7 +27,6 @@ func Watch(path string) (<-chan string, error) {
 		for {
 			e := <-c
 			path := e.Path()
-			log.Info().Msgf("Event %v received for: %s", e.Event().String(), path)
 			if MatchImage(path) {
 				files <- path
 			}
