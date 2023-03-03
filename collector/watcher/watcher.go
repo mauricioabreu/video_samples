@@ -27,7 +27,11 @@ func Watch(path string) (<-chan string, error) {
 	go func() {
 		for {
 			e := <-c
-			log.Info().Msgf("Event %v received for: %s", e.Event().String(), e.Path())
+			path := e.Path()
+			log.Info().Msgf("Event %v received for: %s", e.Event().String(), path)
+			if MatchImage(path) {
+				files <- path
+			}
 		}
 	}()
 
@@ -41,4 +45,8 @@ func MatchExt(path string, patterns []string) bool {
 		return false
 	}
 	return lo.Contains(patterns, ext[1:])
+}
+
+func MatchImage(path string) bool {
+	return MatchExt(path, []string{"jpg", "png"})
 }
