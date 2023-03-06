@@ -8,6 +8,12 @@ import (
 	"github.com/samber/lo"
 )
 
+type File struct {
+	Path    string
+	Dir     string
+	ModTime int64
+}
+
 // Magic number. notify demands for a buffered channel because it does not block sending
 // to the channel
 var filesBuffer = 200
@@ -21,7 +27,6 @@ func Watch(path string) (<-chan string, error) {
 	if err := notify.Watch(path, c, WriteEvent); err != nil {
 		return nil, fmt.Errorf("failed to watch %s: %w", path, err)
 	}
-	defer notify.Stop(c)
 
 	go func() {
 		for {
