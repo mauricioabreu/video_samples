@@ -9,8 +9,8 @@ title: Video Samples flowchart
 graph LR
     A[Extractor] --> |Extract resources| B[(Filesystem)]
     C[Collector] --> |Collect resources| B
-    C --> |Store resources| D(Database)
-    E[API] --> |Query resources| D[(Database)]
+    C --> |Store resources| D(Redis)
+    E[API] --> |Query resources| D[(Redis)]
 ```
 
 ## What it is?
