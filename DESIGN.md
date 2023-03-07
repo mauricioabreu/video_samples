@@ -48,9 +48,9 @@ title: Store and query thumbnails
 ---
 
 graph LR
-    collector([collector])-. Save thumbnail info <br/>into Redis .->redis[(Redis)]
-    redis --> success{Success?}
-    success -->|Yes| storage[(Storage)]
+    collector([collector])-. Save thumbnail info <br/>into Redis set .->redisset[(Redis)]
+    redisset --> success{Success?}
+    success -->|Yes, save blob| redisblob[(Redis)]
     success -->|No| discard[Discard thumb]
 ```
 
