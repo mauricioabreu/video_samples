@@ -3,6 +3,7 @@ package thumbnails_test
 import (
 	"errors"
 	"testing"
+	"time"
 
 	"github.com/go-redis/redismock/v9"
 	"github.com/mauricioabreu/video_samples/collector"
@@ -18,7 +19,7 @@ func TestThumbnails(t *testing.T) {
 }
 
 var _ = Describe("Thumbnails insert", func() {
-	When("Adding to set succeeds", func() {
+	When("Adding to redis succeeds", func() {
 		It("inserts the thumbnail", func() {
 			file := collector.File{
 				Path:    "/thumbnails/bunny/0001.jpg",
@@ -28,8 +29,10 @@ var _ = Describe("Thumbnails insert", func() {
 			uuid := func() string { return "1" }
 			clusterClient, clusterMock := redismock.NewClusterMock()
 			clusterMock.
-				ExpectZAdd("thumbnails/bunny", redis.Z{Score: float64(file.ModTime), Member: uuid()}).
+				ExpectZAdd("thumbnails/bunny", redis.Z{Score: float64(file.ModTime), Member: "blob/1"}).
 				SetVal(0)
+			clusterMock.
+				ExpectSet("blob/1", "data", time.Duration(10)*time.Second).SetVal("OK")
 
 			err := thumbnails.Insert(file, uuid, clusterClient)
 
