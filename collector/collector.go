@@ -11,6 +11,7 @@ import (
 type File struct {
 	Path    string
 	Dir     string
+	Data    []byte
 	ModTime int64
 }
 
@@ -30,9 +31,14 @@ func NewFile(path string) (*File, error) {
 	if err != nil {
 		return nil, err
 	}
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
 	return &File{
 		Path:    path,
 		Dir:     filepath.Dir(path),
+		Data:    data,
 		ModTime: fileInfo.ModTime().Unix(),
 	}, nil
 }
