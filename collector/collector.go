@@ -1,6 +1,7 @@
 package collector
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 
@@ -29,11 +30,11 @@ func Collect(path string) {
 func NewFile(path string) (*File, error) {
 	fileInfo, err := os.Stat(path)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to read file info: %w", err)
 	}
 	data, err := os.ReadFile(path)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to read file content: %w", err)
 	}
 	return &File{
 		Path:    path,

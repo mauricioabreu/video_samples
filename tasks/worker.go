@@ -5,10 +5,12 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+const maxConcurrency = 10
+
 func StartWorker() {
 	srv := asynq.NewServer(
 		asynq.RedisClientOpt{Addr: "localhost:6379"},
-		asynq.Config{Concurrency: 10},
+		asynq.Config{Concurrency: maxConcurrency},
 	)
 
 	mux := asynq.NewServeMux()
