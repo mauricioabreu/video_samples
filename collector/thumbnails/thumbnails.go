@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/mauricioabreu/video_samples/collector"
+	"github.com/mauricioabreu/video_samples/collector/filesystem"
 	"github.com/redis/go-redis/v9"
 )
 
-func Insert(file collector.File, expiryAfter int, uuid func() string, rc *redis.ClusterClient) error {
+func Insert(file *filesystem.File, expiryAfter int, uuid func() string, rc *redis.ClusterClient) error {
 	thumbId := fmt.Sprintf("blob/%s", uuid())
 	thumbsKey := fmt.Sprintf("thumbnails/%s", file.Dir)
 

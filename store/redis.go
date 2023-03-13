@@ -1,8 +1,8 @@
-package redis
+package store
 
 import "github.com/redis/go-redis/v9"
 
-func NewRedis(addrs []string) *redis.ClusterClient {
+func NewRedisCluster(addrs []string) *redis.ClusterClient {
 	rc := redis.NewClusterClient(&redis.ClusterOptions{
 		Addrs: addrs,
 	})

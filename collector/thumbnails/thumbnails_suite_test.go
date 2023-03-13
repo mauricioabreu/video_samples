@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/go-redis/redismock/v9"
-	"github.com/mauricioabreu/video_samples/collector"
+	"github.com/mauricioabreu/video_samples/collector/filesystem"
 	"github.com/mauricioabreu/video_samples/collector/thumbnails"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -21,7 +21,7 @@ func TestThumbnails(t *testing.T) {
 var _ = Describe("Thumbnails insert", func() {
 	When("Adding to redis succeeds", func() {
 		It("inserts the thumbnail", func() {
-			file := collector.File{
+			file := &filesystem.File{
 				Path:    "/thumbnails/bunny/0001.jpg",
 				Dir:     "bunny",
 				Data:    []byte("test_data"),
@@ -43,7 +43,7 @@ var _ = Describe("Thumbnails insert", func() {
 	})
 	When("Adding to set fails", func() {
 		It("does not insert the thumbnail", func() {
-			file := collector.File{
+			file := &filesystem.File{
 				Path:    "/thumbnails/bunny/0001.jpg",
 				Dir:     "bunny",
 				Data:    []byte("test_data"),

@@ -1,22 +1,22 @@
 package collector
 
 import (
-	"fmt"
-	"os"
-	"path/filepath"
+	"github.com/google/uuid"
 
+	"github.com/mauricioabreu/video_samples/collector/filesystem"
+	"github.com/mauricioabreu/video_samples/collector/thumbnails"
 	"github.com/mauricioabreu/video_samples/collector/watcher"
+	"github.com/mauricioabreu/video_samples/config"
+	"github.com/mauricioabreu/video_samples/store"
 	"github.com/rs/zerolog/log"
 )
 
-type File struct {
-	Path    string
-	Dir     string
-	Data    []byte
-	ModTime int64
-}
-
 func Collect(path string) {
+	cfg, err := config.GetConfig()
+	if err != nil {
+		log.Fatal().Err(err).Msg("Failed to get config")
+	}
+	rc := store.NewRedisCluster(cfg.RedisAddrs)
 	files, err := watcher.Watch(path)
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to initialize collector")
@@ -24,22 +24,10 @@ func Collect(path string) {
 
 	for file := range files {
 		log.Debug().Msgf("File found: %s", file)
+		thumbnail, err := filesystem.NewFile(file)
+		if err != nil {
+			log.Error().Err(err).Msgf("Failed to read file: %s", file)
+		}
+		thumbnails.Insert(thumbnail, 60, uuid.NewString, rc)
 	}
-}
-
-func NewFile(path string) (*File, error) {
-	fileInfo, err := os.Stat(path)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read file info: %w", err)
-	}
-	data, err := os.ReadFile(path)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read file content: %w", err)
-	}
-	return &File{
-		Path:    path,
-		Dir:     filepath.Dir(path),
-		Data:    data,
-		ModTime: fileInfo.ModTime().Unix(),
-	}, nil
 }
