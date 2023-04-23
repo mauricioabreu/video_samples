@@ -2,14 +2,15 @@ package tasks
 
 import (
 	"github.com/hibiken/asynq"
+	"github.com/mauricioabreu/video_samples/config"
 	"github.com/rs/zerolog/log"
 )
 
 const maxConcurrency = 10
 
-func StartWorker() {
+func StartWorker(c *config.Config) {
 	srv := asynq.NewServer(
-		asynq.RedisClientOpt{Addr: "localhost:6379"},
+		asynq.RedisClusterClientOpt{Addrs: c.RedisAddrs},
 		asynq.Config{Concurrency: maxConcurrency},
 	)
 

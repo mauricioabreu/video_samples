@@ -1,0 +1,19 @@
+services:
+  worker:
+    build: .
+    command: go run main.go work
+    depends_on:
+      - redis
+    environment:
+      - REDIS_ADDRS=redis:6379
+  enqueuer:
+    build: .
+    command: go run main.go enqueue
+    depends_on:
+      - redis
+    environment:
+      - REDIS_ADDRS=redis:6379
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
