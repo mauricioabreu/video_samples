@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/hibiken/asynq"
-	"github.com/mauricioabreu/video_samples/config"
 	"github.com/mauricioabreu/video_samples/extractor"
 	"github.com/mauricioabreu/video_samples/extractor/inventory"
 	"github.com/rs/zerolog/log"
@@ -13,12 +12,8 @@ import (
 
 const runEvery = 30 * time.Second
 
-func Enqueue(getStreamings func() ([]inventory.Streaming, error)) {
-	cfg, err := config.GetConfig()
-	if err != nil {
-		log.Fatal().Err(err).Msg("")
-	}
-	client := asynq.NewClient(asynq.RedisClusterClientOpt{Addrs: cfg.RedisAddrs})
+func Enqueue(getStreamings func() ([]inventory.Streaming, error), redisAddrs []string) {
+	client := asynq.NewClient(asynq.RedisClusterClientOpt{Addrs: redisAddrs})
 	defer client.Close()
 
 	enqueueTasks(getStreamings, client)

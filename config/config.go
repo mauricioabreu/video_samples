@@ -12,10 +12,10 @@ type Config struct {
 	InventoryAddress   string   `env:"INVENTORY_ADDRESS,notEmpty"`
 }
 
-func GetConfig() (*Config, error) {
-	var cfg *Config
+func GetConfig() (Config, error) {
+	cfg := Config{}
 	if err := env.Parse(&cfg); err != nil {
-		return nil, fmt.Errorf("failed to load configs: %w", err)
+		return cfg, fmt.Errorf("failed to load configs: %w", err)
 	}
 	return cfg, nil
 }

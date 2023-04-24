@@ -23,7 +23,7 @@ func EnqueueCmd() *cobra.Command {
 					return inventory.GetStreams(url)
 				}
 			}
-			tasks.Enqueue(getStreams(cfg.InventoryAddress))
+			tasks.Enqueue(getStreams(cfg.InventoryAddress), cfg.RedisAddrs)
 			collector.Collect("testvideo/thumbs/colors")
 		},
 	}

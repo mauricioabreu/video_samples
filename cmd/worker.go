@@ -16,7 +16,7 @@ func Work() *cobra.Command {
 			if err != nil {
 				log.Fatal().Err(err).Msg("Failed to get config")
 			}
-			tasks.StartWorker(cfg)
+			tasks.StartWorker(&cfg)
 		},
 	}
 }
