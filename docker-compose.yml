@@ -13,7 +13,13 @@ services:
       - redis
     environment:
       - REDIS_ADDRS=redis:6379
+      - INVENTORY_ADDRESS=inventory:8080/streams.json
   redis:
     image: redis:7-alpine
     ports:
       - "6379:6379"
+  video-api:
+    image: python:3.9-alpine
+    command: python3 -m http.server -d testvideo 8080
+    ports:
+      - "8080:8080"

@@ -1,0 +1,6 @@
+[
+  {
+    "name": "colors",
+    "playlist": "streaming:8080/playlist.m3u8"
+  }
+]
