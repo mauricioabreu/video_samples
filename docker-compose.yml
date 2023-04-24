@@ -20,6 +20,8 @@ services:
       - "6379:6379"
   video-api:
     image: python:3.9-alpine
-    command: python3 -m http.server -d testvideo 8080
+    command: python3 -m http.server -d /testvideo 8080
+    volumes:
+      - ./testvideo:/testvideo
     ports:
       - "8080:8080"
