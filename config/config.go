@@ -3,7 +3,7 @@ package config
 import (
 	"fmt"
 
-	"github.com/caarlos0/env/v7"
+	"github.com/caarlos0/env/v8"
 )
 
 type Config struct {

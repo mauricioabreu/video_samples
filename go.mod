@@ -3,7 +3,7 @@ module github.com/mauricioabreu/video_samples
 go 1.20
 
 require (
-	github.com/caarlos0/env/v7 v7.1.0
+	github.com/caarlos0/env/v8 v8.0.0
 	github.com/go-redis/redismock/v9 v9.0.1
 	github.com/google/uuid v1.3.0
 	github.com/hibiken/asynq v0.24.0
