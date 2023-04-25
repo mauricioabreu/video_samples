@@ -28,16 +28,16 @@ var _ = Describe("Thumbnails insert", func() {
 				ModTime: 1678103906,
 			}
 			uuid := func() string { return "1" }
-			clusterClient, clusterMock := redismock.NewClusterMock()
-			clusterMock.
+			redisClient, redisMock := redismock.NewClientMock()
+			redisMock.
 				ExpectZAdd("thumbnails/bunny", redis.Z{Score: float64(file.ModTime), Member: "blob/1"}).
 				SetVal(0)
-			clusterMock.
+			redisMock.
 				ExpectSet("blob/1", []byte("test_data"), time.Duration(30)*time.Second).SetVal("OK")
 
-			err := thumbnails.Insert(file, 30, uuid, clusterClient)
+			err := thumbnails.Insert(file, 30, uuid, redisClient)
 
-			Expect(clusterMock.ExpectationsWereMet()).To(Not(HaveOccurred()))
+			Expect(redisMock.ExpectationsWereMet()).To(Not(HaveOccurred()))
 			Expect(err).To(Not(HaveOccurred()))
 		})
 	})
@@ -50,12 +50,12 @@ var _ = Describe("Thumbnails insert", func() {
 				ModTime: 1678103906,
 			}
 			uuid := func() string { return "1" }
-			clusterClient, clusterMock := redismock.NewClusterMock()
-			clusterMock.
+			redisClient, redisMock := redismock.NewClientMock()
+			redisMock.
 				ExpectZAdd("thumbnails/bunny", redis.Z{Score: float64(file.ModTime), Member: uuid()}).
 				SetErr(errors.New("failed to execute zadd cmd"))
 
-			err := thumbnails.Insert(file, 30, uuid, clusterClient)
+			err := thumbnails.Insert(file, 30, uuid, redisClient)
 			Expect(err).To(HaveOccurred())
 		})
 	})

@@ -12,8 +12,8 @@ import (
 
 const runEvery = 30 * time.Second
 
-func Enqueue(getStreamings func() ([]inventory.Streaming, error), redisAddrs []string) {
-	client := asynq.NewClient(asynq.RedisClusterClientOpt{Addrs: redisAddrs})
+func Enqueue(getStreamings func() ([]inventory.Streaming, error), redisAddr string) {
+	client := asynq.NewClient(asynq.RedisClientOpt{Addr: redisAddr})
 	defer client.Close()
 
 	enqueueTasks(getStreamings, client)

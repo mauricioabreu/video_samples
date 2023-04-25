@@ -7,9 +7,9 @@ import (
 )
 
 type Config struct {
-	RedisAddrs         []string `env:"REDIS_ADDRS,notEmpty" envSeparator:","`
-	EnqueueConcurrency int      `env:"WORKERS_CONCURRENCY" envDefault:"10"`
-	InventoryAddress   string   `env:"INVENTORY_ADDRESS,notEmpty"`
+	RedisAddr          string `env:"REDIS_ADDR,notEmpty"`
+	EnqueueConcurrency int    `env:"WORKERS_CONCURRENCY" envDefault:"10"`
+	InventoryAddress   string `env:"INVENTORY_ADDRESS,notEmpty"`
 }
 
 func GetConfig() (Config, error) {

@@ -10,7 +10,7 @@ const maxConcurrency = 10
 
 func StartWorker(c *config.Config) {
 	srv := asynq.NewServer(
-		asynq.RedisClusterClientOpt{Addrs: c.RedisAddrs},
+		asynq.RedisClientOpt{Addr: c.RedisAddr},
 		asynq.Config{Concurrency: maxConcurrency},
 	)
 

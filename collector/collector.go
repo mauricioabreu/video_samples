@@ -16,7 +16,7 @@ func Collect(path string) {
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to get config")
 	}
-	rc := store.NewRedisCluster(cfg.RedisAddrs)
+	rc := store.NewRedis(cfg.RedisAddr)
 	files, err := watcher.Watch(path)
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to initialize collector")

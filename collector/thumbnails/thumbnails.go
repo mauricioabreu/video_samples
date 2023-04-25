@@ -9,7 +9,7 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-func Insert(file *filesystem.File, expiryAfter int, uuid func() string, rc *redis.ClusterClient) error {
+func Insert(file *filesystem.File, expiryAfter int, uuid func() string, rc *redis.Client) error {
 	thumbId := fmt.Sprintf("blob/%s", uuid())
 	thumbsKey := fmt.Sprintf("thumbnails/%s", file.Dir)
 

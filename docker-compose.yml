@@ -5,16 +5,16 @@ services:
     depends_on:
       - redis
     environment:
-      - REDIS_ADDRS=redis:6379
-      - INVENTORY_ADDRESS=inventory:8080/streams.json
+      - REDIS_ADDR=redis:6379
+      - INVENTORY_ADDRESS=http://video-api:8080/streams.json
   enqueuer:
     build: .
     command: go run main.go enqueue
     depends_on:
       - redis
     environment:
-      - REDIS_ADDRS=redis:6379
-      - INVENTORY_ADDRESS=http://inventory:8080/streams.json
+      - REDIS_ADDR=redis:6379
+      - INVENTORY_ADDRESS=http://video-api:8080/streams.json
   redis:
     image: redis:7-alpine
     ports:
