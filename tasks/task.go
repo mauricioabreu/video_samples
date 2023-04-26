@@ -29,7 +29,7 @@ func HandleThumbsExtractTask(ctx context.Context, t *asynq.Task) error {
 	}
 	log.Info().Msgf("Extracting thumbs from video URL: %s", opts.Input)
 	if err := extractor.ExtractThumbs("colors", opts, extractor.RunCmd); err != nil {
-		return fmt.Errorf("failed to run the extractor: %v %w", err, asynq.SkipRetry)
+		return fmt.Errorf("failed to run the extractor: %v", err)
 	}
 	return nil
 }
