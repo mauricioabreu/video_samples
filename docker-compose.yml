@@ -26,3 +26,8 @@ services:
       - ./testvideo:/testvideo
     ports:
       - "8080:8080"
+  stream:
+    build: testvideo
+    command: sh -c /testvideo/stream.sh
+    ports:
+      - "9090:9090"

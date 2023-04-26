@@ -1,6 +1,6 @@
 [
   {
     "name": "colors",
-    "playlist": "http://video-api:8080/playlist.m3u8"
+    "playlist": "http://stream:9090/playlist.m3u8"
   }
 ]
