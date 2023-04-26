@@ -12,6 +12,12 @@ Coming soon
 
 Coming soon
 
+## Development
+
+```
+docker compose up
+```
+
 ## Tests
 
 First, make sure you have the [ginkgo](http://onsi.github.io/ginkgo/) test runner installed.
@@ -19,5 +25,5 @@ First, make sure you have the [ginkgo](http://onsi.github.io/ginkgo/) test runne
 Then run the test suite:
 
 ```
-ginkgo -p -v ./... 
+ginkgo -p -v ./...
 ```
