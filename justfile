@@ -2,6 +2,10 @@
 run:
 	docker compose up
 
+# Stop project
+stop:
+	docker compose down
+
 # Run tests
 test:
 	ginkgo -p -v ./...
